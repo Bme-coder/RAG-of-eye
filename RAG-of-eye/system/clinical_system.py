@@ -46,7 +46,7 @@ class FuzzyDataPoint(BaseModel):
     notes: Optional[str] = None
     weight_alpha: float = Field(default=0.5)
 
-    @root_validator(pre=False)
+    @root_validator(pre=False, skip_on_failure=True)
     def compute_uncertainty(cls, values):
         sample_size = values.get("sample_size")
         if sample_size is None or sample_size < 30:

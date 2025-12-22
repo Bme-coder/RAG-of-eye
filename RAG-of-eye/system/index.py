@@ -55,11 +55,18 @@ class MyopiaCalculator(QMainWindow):
         """兜底的模拟数据"""
         return {
             "Asian_Female_8_-2.5": {
+                "Natural": {
+                    "timeline": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+                    "mean": [-2.5, -3.4, -4.2, -4.9, -5.5, -6.0, -6.4, -6.7, -6.9, -7.0],
+                    "upper": [-2.3, -3.0, -3.6, -4.1, -4.6, -5.0, -5.3, -5.5, -5.7, -5.8],
+                    "lower": [-2.7, -3.8, -4.8, -5.7, -6.4, -7.0, -7.5, -7.9, -8.1, -8.2],
+                },
                 "Atropine_Low": {
                     "timeline": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
-                    "natural": [-2.5, -3.4, -4.2, -4.9, -5.5, -6.0, -6.4, -6.7, -6.9, -7.0],
-                    "managed": [-2.5, -3.0, -3.5, -3.9, -4.2, -4.5, -4.7, -4.8, -4.9, -5.0]
-                }
+                    "mean": [-2.5, -3.0, -3.5, -3.9, -4.2, -4.5, -4.7, -4.8, -4.9, -5.0],
+                    "upper": [-2.3, -2.8, -3.2, -3.5, -3.8, -4.0, -4.2, -4.3, -4.4, -4.5],
+                    "lower": [-2.7, -3.2, -3.8, -4.3, -4.6, -5.0, -5.2, -5.3, -5.4, -5.5],
+                },
             }
         }
 
@@ -194,30 +201,32 @@ class MyopiaCalculator(QMainWindow):
         key = f"{eth}_{gen}_{age}_{dio}"
         # print(f"查询 Key: {key}") # 调试用
 
-        # 3. 查库
-        if key in self.db and treat_key in self.db[key]:
-            data = self.db[key][treat_key]
-            self.plot_chart(data)
-            self.render_stats(data, treat_key)
-        else:
-            # 数据没找到 (可能是 Mock 数据的 Key 不对，或者范围溢出)
-            self.figure.clear()
-            ax = self.figure.add_subplot(111)
-            ax.text(0.5, 0.5, "暂无该组合数据", ha='center', va='center', fontsize=14)
-            self.canvas.draw()
-            self.lbl_natural.setText("--")
+        entry = self.db.get(key)
+        if not entry:
+            return self.show_empty_state("暂无该组合数据")
 
-    def plot_chart(self, data):
+        natural_raw = entry.get("Natural")
+        treatment_raw = entry.get(treat_key)
+        natural_data = self.normalize_curve(natural_raw, prefer_managed=False)
+        treatment_data = self.normalize_curve(treatment_raw, prefer_managed=True)
+
+        if natural_data and treatment_data:
+            self.plot_chart(natural_data, treatment_data)
+            self.render_stats(natural_data, treatment_data, treat_key)
+        else:
+            self.show_empty_state("暂无该组合数据")
+
+    def plot_chart(self, natural, treatment):
         self.figure.clear()
         ax = self.figure.add_subplot(111)
-        
+
         # 绘制红线 (自然)
-        ax.plot(data['timeline'], data['natural'], color='#e74c3c', linewidth=3, label='自然进展 (无干预)')
-        ax.fill_between(data['timeline'], data['natural'],  max(data['natural'] + data['managed']), color='#e74c3c', alpha=0.1)
+        ax.plot(natural['timeline'], natural['mean'], color='#e74c3c', linewidth=3, label='自然进展 (无干预)')
+        ax.fill_between(natural['timeline'], natural['upper'], natural['lower'], color='#e74c3c', alpha=0.2)
 
         # 绘制绿线 (干预)
-        ax.plot(data['timeline'], data['managed'], color='#27ae60', linewidth=3, label='干预后 (With Management)')
-        ax.fill_between(data['timeline'], data['managed'], min(data['natural'] + data['managed']), color='#27ae60', alpha=0.1)
+        ax.plot(treatment['timeline'], treatment['mean'], color='#27ae60', linewidth=3, label='干预后 (With Management)')
+        ax.fill_between(treatment['timeline'], treatment['upper'], treatment['lower'], color='#27ae60', alpha=0.2)
 
         # 设置图表样式
         ax.set_title("屈光度预测曲线 (Refractive Error)", fontsize=12, pad=15)
@@ -231,11 +240,11 @@ class MyopiaCalculator(QMainWindow):
         
         self.canvas.draw()
 
-    def render_stats(self, data, treat_key):
-        final_natural = data['natural'][-1]
-        final_managed = data['managed'][-1]
+    def render_stats(self, natural, treatment, treat_key):
+        final_natural = natural['mean'][-1]
+        final_managed = treatment['mean'][-1]
         saved = final_managed - final_natural # 比如 -4 - (-6) = +2
-        
+
         self.lbl_natural.setText(f"{final_natural:.2f} D")
         self.lbl_managed.setText(f"{final_managed:.2f} D")
         self.lbl_saved.setText(f"+{saved:.2f} D")
@@ -243,6 +252,43 @@ class MyopiaCalculator(QMainWindow):
         # 有效率回显
         efficacy_map = {"Atropine_Low": "37%", "Ortho_K": "50%", "Defocus_Glasses": "25%"}
         self.lbl_efficacy.setText(efficacy_map.get(treat_key, "--"))
+
+    def normalize_curve(self, entry, prefer_managed: bool):
+        if not entry:
+            return None
+        timeline = entry.get("timeline") or []
+        if not timeline:
+            return None
+
+        if "mean" in entry:
+            mean = entry.get("mean") or entry.get("natural") or entry.get("managed")
+            upper = entry.get("upper") or mean
+            lower = entry.get("lower") or mean
+        else:
+            base = entry.get("managed") if prefer_managed else entry.get("natural")
+            if base is None:
+                base = entry.get("natural") or entry.get("managed")
+            if base is None:
+                return None
+            mean = base
+            upper = entry.get("upper") or entry.get("lower") or base
+            lower = entry.get("lower") or entry.get("upper") or base
+
+        return {
+            "timeline": timeline,
+            "mean": mean,
+            "upper": upper if upper else mean,
+            "lower": lower if lower else mean,
+        }
+
+    def show_empty_state(self, message: str):
+        self.figure.clear()
+        ax = self.figure.add_subplot(111)
+        ax.text(0.5, 0.5, message, ha='center', va='center', fontsize=14)
+        self.canvas.draw()
+        self.lbl_natural.setText("--")
+        self.lbl_managed.setText("--")
+        self.lbl_saved.setText("--")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

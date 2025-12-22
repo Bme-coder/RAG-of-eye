@@ -1,74 +1,74 @@
 {
-  "BASE_RATES": {
-    "Asian": {
-      "Female": {
-        "6": -1.08,
-        "7": -0.97,
-        "8": -0.86,
-        "9": -0.76,
-        "10": -0.66,
-        "11": -0.57,
-        "12": -0.48,
-        "13": -0.39,
-        "14": -0.32,
-        "15": -0.24,
-        "16": -0.17
-      },
-      "Male": {
-        "6": -1.08,
-        "7": -0.97,
-        "8": -0.86,
-        "9": -0.76,
-        "10": -0.66,
-        "11": -0.57,
-        "12": -0.48,
-        "13": -0.39,
-        "14": -0.32,
-        "15": -0.24,
-        "16": -0.17
+  "base_rates": [
+    {
+      "rate": -1.08,
+      "age": 6.0,
+      "n": null,
+      "weight_alpha": 0.5,
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "notes": "Extracted from the table 'SE Progression (East Asians) (D/year)' for age 6.",
+      "label": "Asian|Male|6",
+      "variables": {
+        "Age": 6,
+        "Ethnicity": "Asian"
       }
     },
-    "Caucasian": {
-      "Female": {
-        "6": -0.6,
-        "7": -0.52,
-        "8": -0.45,
-        "9": -0.38,
-        "10": -0.32,
-        "11": -0.26,
-        "12": -0.21,
-        "13": -0.16,
-        "14": -0.12,
-        "15": -0.08,
-        "16": -0.05
-      },
-      "Male": {
-        "6": -0.6,
-        "7": -0.52,
-        "8": -0.45,
-        "9": -0.38,
-        "10": -0.32,
-        "11": -0.26,
-        "12": -0.21,
-        "13": -0.16,
-        "14": -0.12,
-        "15": -0.08,
-        "16": -0.05
+    {
+      "rate": -0.6,
+      "age": 6.0,
+      "n": null,
+      "weight_alpha": 0.5,
+      "ethnicity": "Asian",
+      "gender": "Female",
+      "notes": "Extracted from the table 'SE Progression (Europeans) (D/year)' for age 6.",
+      "label": "Asian|Female|6",
+      "variables": {
+        "Age": 6,
+        "Ethnicity": "Asian"
+      }
+    },
+    {
+      "rate": -0.3,
+      "age": 11.0,
+      "n": null,
+      "weight_alpha": 0.5,
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "notes": "Extracted from the table 'SE Progression (East Asians) (D/year)' for age 11.",
+      "label": "Asian|Male|11",
+      "variables": {
+        "Age": 11,
+        "Ethnicity": "Asian"
+      }
+    },
+    {
+      "rate": -0.17,
+      "age": 11.0,
+      "n": null,
+      "weight_alpha": 0.5,
+      "ethnicity": "Asian",
+      "gender": "Female",
+      "notes": "Extracted from the table 'SE Progression (Europeans) (D/year)' for age 11.",
+      "label": "Asian|Female|11",
+      "variables": {
+        "Age": 11,
+        "Ethnicity": "Asian"
       }
     }
-  },
-  "TREATMENTS": {
+  ],
+  "treatments": {
     "Atropine_Low": {
       "name": "Low-dose Atropine",
       "efficacy": 0.5
     },
     "Ortho_K": {
       "name": "Ortho-K",
-      "efficacy": 0.45
+      "efficacy": 0.6
     },
     "Defocus_Glasses": {
       "name": "Defocus Glasses",
-      "efficacy": 0.3
+      "efficacy": 0.4
     }
   }
 }

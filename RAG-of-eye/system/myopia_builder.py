@@ -32,29 +32,60 @@ def load_config(path: Path = CONFIG_PATH):
         treatments = data.get("treatments") or data.get("TREATMENTS", {})
 
     df = pd.DataFrame(base_records)
+    # Remove columns that contain nested structures (dict/list) before grouping
+    drop_cols = []
+    for col in df.columns:
+        if col in {"rate", "n", "age", "weight_alpha"}:
+            continue
+        if df[col].apply(lambda val: isinstance(val, (dict, list, set))).any():
+            drop_cols.append(col)
+    if drop_cols:
+        df = df.drop(columns=drop_cols)
+    text_noise_cols = [col for col in ("label", "notes") if col in df.columns]
+    if text_noise_cols:
+        df = df.drop(columns=text_noise_cols)
     return df, treatments
 
 
-def calculate_progression(rate_lookup: Dict[int, float], start_age: int, start_diopter: float, efficacy: float):
+def calculate_progression(
+    rate_lookup: Dict[int, float],
+    upper_lookup: Dict[int, float],
+    lower_lookup: Dict[int, float],
+    start_age: int,
+    start_diopter: float,
+    efficacy: float,
+):
     target_age = 18
     timeline = list(range(start_age, target_age + 1))
-    natural = [round(start_diopter, 2)]
-    managed = [round(start_diopter, 2)]
-    curr_nat = start_diopter
-    curr_man = start_diopter
-    fallback_rate = rate_lookup[max(rate_lookup.keys())] if rate_lookup else -0.5
+    scale = 1 - efficacy
+    if not rate_lookup:
+        rate_lookup = {start_age: -0.5}
+    if not upper_lookup:
+        upper_lookup = rate_lookup
+    if not lower_lookup:
+        lower_lookup = rate_lookup
 
-    for age in timeline[:-1]:
-        rate = rate_lookup.get(age, fallback_rate)
-        curr_nat += rate
-        curr_man += rate * (1 - efficacy)
-        natural.append(round(curr_nat, 2))
-        managed.append(round(curr_man, 2))
+    def _fallback(lookup: Dict[int, float], default: float) -> float:
+        return lookup.get(max(lookup.keys())) if lookup else default
+
+    fallback_rate = _fallback(rate_lookup, -0.5)
+    fallback_upper = _fallback(upper_lookup, fallback_rate)
+    fallback_lower = _fallback(lower_lookup, fallback_rate)
+
+    def build_series(lookup: Dict[int, float], fallback_value: float) -> List[float]:
+        values = [round(start_diopter, 2)]
+        curr = start_diopter
+        for age in timeline[:-1]:
+            rate = lookup.get(age, fallback_value)
+            curr += rate * scale
+            values.append(round(curr, 2))
+        return values
 
     return {
         "timeline": timeline,
-        "natural": natural,
-        "managed": managed,
+        "mean": build_series(rate_lookup, fallback_rate),
+        "upper": build_series(upper_lookup, fallback_upper),
+        "lower": build_series(lower_lookup, fallback_lower),
     }
 
 
@@ -91,6 +122,8 @@ def build_dictionary():
         rate_lookup = {
             int(age): float(rate) for age, rate in zip(fit_result["timeline"], fit_result["mean_curve"])
         }
+        upper_lookup = {int(age): float(val) for age, val in zip(fit_result["timeline"], fit_result.get("upper", []))}
+        lower_lookup = {int(age): float(val) for age, val in zip(fit_result["timeline"], fit_result.get("lower", []))}
         label_parts = [sanitize_value(val) for val in group_key]
         base_label = "_".join(part for part in label_parts if part and part != "NA") or "GLOBAL"
 
@@ -101,11 +134,25 @@ def build_dictionary():
                 entry = db.setdefault(user_key, {})
 
                 if "Natural" not in entry:
-                    entry["Natural"] = calculate_progression(rate_lookup, age, dio, efficacy=0.0)
+                    entry["Natural"] = calculate_progression(
+                        rate_lookup,
+                        upper_lookup,
+                        lower_lookup,
+                        age,
+                        dio,
+                        efficacy=0.0,
+                    )
 
                 for t_key, t_val in treatments.items():
                     efficacy = t_val.get("efficacy", 0.0)
-                    entry[t_key] = calculate_progression(rate_lookup, age, dio, efficacy)
+                    entry[t_key] = calculate_progression(
+                        rate_lookup,
+                        upper_lookup,
+                        lower_lookup,
+                        age,
+                        dio,
+                        efficacy,
+                    )
 
                 count += 1
                 if count % 1000 == 0:
