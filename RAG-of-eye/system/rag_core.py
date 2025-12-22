@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+from pathlib import Path
 import nest_asyncio
 
 from dotenv import load_dotenv
@@ -29,10 +30,13 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
 # --- 默认配置参数 ---
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DATA_ROOT = PROJECT_ROOT / "data"
+ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
 EMBED_MODEL = "text-embedding-3-small"
 LLM_MODEL = "gpt-4o-mini" 
-DEFAULT_PAPERS_DIR = "./medical_papers"
-DEFAULT_STORAGE_DIR = "./paper_storage_vlm_structure"
+DEFAULT_PAPERS_DIR = str((DATA_ROOT / "raw" / "medical_papers").resolve())
+DEFAULT_STORAGE_DIR = str((DATA_ROOT / "index" / "paper_storage_vlm_structure").resolve())
 
 def check_api_keys():
     """检查必要环境变量"""
@@ -115,7 +119,7 @@ def load_or_create_index(papers_dir, storage_dir):
         
     return index
 
-def build_query_engine(index):
+def build_query_engine(index, similarity_top_k=10):
     """
     (修改点) 仅构建并返回引擎对象，不运行死循环
     这是给外部接口调用的核心组件
@@ -125,7 +129,7 @@ def build_query_engine(index):
     reranker = LLMRerank(top_n=3)
     
     query_engine = index.as_query_engine(
-        similarity_top_k=10, 
+        similarity_top_k=similarity_top_k, 
         node_postprocessors=[reranker],
         response_mode="compact" 
     )
@@ -134,7 +138,11 @@ def build_query_engine(index):
 # ==========================================
 # 核心接口：供外部程序 (如 ClinicalAgent) 调用
 # ==========================================
-def get_rag_engine(papers_dir=DEFAULT_PAPERS_DIR, storage_dir=DEFAULT_STORAGE_DIR):
+def get_rag_engine(
+    papers_dir=DEFAULT_PAPERS_DIR,
+    storage_dir=DEFAULT_STORAGE_DIR,
+    similarity_top_k=10,
+):
     """
     对外暴露的唯一接口。
     调用此函数，直接返回一个可以 .query() 的引擎对象。
@@ -153,7 +161,7 @@ def get_rag_engine(papers_dir=DEFAULT_PAPERS_DIR, storage_dir=DEFAULT_STORAGE_DI
     index = load_or_create_index(papers_dir, storage_dir)
     
     # 4. 返回构建好的引擎
-    return build_query_engine(index)
+    return build_query_engine(index, similarity_top_k=similarity_top_k)
 
 # ==========================================
 # 本地测试入口 (保留原有交互功能)

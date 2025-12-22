@@ -2,8 +2,8 @@ import json
 import os
 import numpy as np
 from scipy.optimize import curve_fit
-from pydantic import BaseModel, Field
-from typing import List, Dict, Optional
+from pydantic import BaseModel, Field, ValidationError, root_validator
+from typing import List, Dict, Optional, Any
 from openai import OpenAI
 from rag_core import get_rag_engine
 
@@ -35,6 +35,63 @@ class EvaluationResult(BaseModel):
     curve_params_with: Dict[str, float] # 拟合参数
     curve_params_without: Dict[str, float]
 
+class FuzzyDataPoint(BaseModel):
+    rate: float
+    age: float
+    sample_size: Optional[int] = Field(default=None, alias="n")
+    ethnicity: Optional[str] = None
+    gender: Optional[str] = None
+    parental_myopia: Optional[str] = None
+    treatment: Optional[str] = None
+    notes: Optional[str] = None
+    weight_alpha: float = Field(default=0.5)
+
+    @root_validator(pre=False)
+    def compute_uncertainty(cls, values):
+        sample_size = values.get("sample_size")
+        if sample_size is None or sample_size < 30:
+            values["weight_alpha"] = 0.5
+        else:
+            values["weight_alpha"] = float(1.0 / max(1.0, np.sqrt(sample_size)))
+        return values
+
+    def to_record(self, extra: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        record = {
+            "rate": self.rate,
+            "age": self.age,
+            "n": self.sample_size,
+            "weight_alpha": self.weight_alpha,
+        }
+        optional_fields = {
+            "ethnicity": self.ethnicity,
+            "gender": self.gender,
+            "parental_myopia": self.parental_myopia,
+            "treatment": self.treatment,
+            "notes": self.notes,
+        }
+        for key, value in optional_fields.items():
+            if value is not None:
+                record[key] = value
+
+        if extra:
+            for key, value in extra.items():
+                if key not in record and value is not None:
+                    record[key] = value
+        return record
+
+class CovariateStat(BaseModel):
+    name: str
+    frequency: str
+
+class CovariateSurvey(BaseModel):
+    variables: List[CovariateStat]
+
+class ValidatedDataPoint(BaseModel):
+    label: str
+    rate: float
+    sample_size: int = Field(..., ge=0)
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+
 # ================= 2. 临床 Agent 类 (核心逻辑) =================
 
 class ClinicalAgent:
@@ -43,6 +100,8 @@ class ClinicalAgent:
         load_dotenv()
         print("正在连接 RAG 内核...")
         self.engine = get_rag_engine()
+        self.survey_engine = None
+        self.survey_top_k = 40
 
         # 👇 1. 获取代理地址
         api_base = os.getenv("OPENAI_API_BASE")
@@ -51,6 +110,48 @@ class ClinicalAgent:
         self.llm_client = OpenAI(
             base_url=api_base # <--- 强制指定
         )
+
+    def survey_covariates(self, max_nodes: int = 40) -> Dict[str, str]:
+        """
+        扫描文献，统计回归分析中常见的自变量及其出现频率。
+        """
+        print(f"🧭 正在执行变量普查，Top-{max_nodes} 节点 ...")
+        if self.survey_engine is None or max_nodes != self.survey_top_k:
+            self.survey_engine = get_rag_engine(similarity_top_k=max_nodes)
+            self.survey_top_k = max_nodes
+
+        survey_query = (
+            "Identify independent variables or covariates that appear in "
+            "regression analyses of myopia development, treatment efficacy, "
+            "or axial elongation."
+        )
+        rag_response = self.survey_engine.query(survey_query)
+
+        survey_prompt = f"""
+        Review the provided medical papers regarding Myopia. List all independent variables used in regression analysis
+        (e.g., Age, AL, Parental Myopia, Outdoor Time). For each variable, estimate the percentage of papers that include it
+        based on the context. Return a JSON object with `variables` as a list of objects containing `name` and `frequency`
+        (the latter should be a percentage string such as "85%").
+
+        Context:
+        {str(rag_response)[:4000]}
+        """
+
+        try:
+            response = self.llm_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "You are a medical literature surveyor. Respond with JSON only."},
+                    {"role": "user", "content": survey_prompt}
+                ],
+                response_format={"type": "json_object"},
+            )
+            payload = response.choices[0].message.content
+            survey = CovariateSurvey.model_validate_json(payload)
+            return {item.name: item.frequency for item in survey.variables}
+        except Exception as exc:
+            print(f"⚠️ 变量普查失败: {exc}")
+            return {}
 
     def _generate_search_query(self, patient_features: Dict) -> str:
         """
@@ -126,7 +227,88 @@ class ClinicalAgent:
         except:
             return {"error": "fit_failed"}
         
-    def research_general_knowledge(self, topic_prompt: str) -> dict:
+    def validate_and_filter(
+        self,
+        data_points: List[Dict[str, Any]],
+        value_field: str = "rate",
+        hard_floor: Optional[float] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        数据清洗：过滤样本量不足和异常值的点位。
+        """
+        if not data_points:
+            return []
+
+        parsed: List[tuple[Dict[str, Any], ValidatedDataPoint]] = []
+        for idx, entry in enumerate(data_points):
+            try:
+                payload = ValidatedDataPoint(
+                    label=str(entry.get("label") or entry.get("id") or entry.get("ethnicity") or f"point_{idx}"),
+                    rate=float(entry[value_field]),
+                    sample_size=int(entry["sample_size"]),
+                    metadata=entry.get("metadata") or {},
+                )
+                parsed.append((entry, payload))
+            except (KeyError, TypeError, ValueError, ValidationError):
+                continue
+
+        # 样本量过滤
+        parsed = [(raw, clean) for raw, clean in parsed if clean.sample_size >= 30]
+        if not parsed:
+            return []
+
+        values = np.array([clean.rate for _, clean in parsed], dtype=float)
+        mean = float(values.mean())
+        std = float(values.std())
+
+        cleaned: List[Dict[str, Any]] = []
+        for raw, clean in parsed:
+            value = clean.rate
+            if std > 0 and abs(value - mean) > 3 * std:
+                continue
+            if hard_floor is not None and value < hard_floor:
+                continue
+
+            age_value = raw.get("age") or raw.get("Age")
+            if age_value is None:
+                continue
+
+            try:
+                fuzzy = FuzzyDataPoint(
+                    rate=float(value),
+                    age=float(age_value),
+                    sample_size=clean.sample_size,
+                    ethnicity=raw.get("ethnicity") or raw.get("Ethnicity"),
+                    gender=raw.get("gender") or raw.get("sex"),
+                    parental_myopia=raw.get("parental_myopia"),
+                    treatment=raw.get("treatment"),
+                    notes=raw.get("notes") or raw.get("commentary"),
+                )
+
+                extra_fields = {
+                    k: v for k, v in raw.items()
+                    if k not in {
+                        "rate", "Rate", value_field, "sample_size", "n",
+                        "ethnicity", "Ethnicity", "gender", "sex",
+                        "age", "Age", "parental_myopia", "treatment", "notes", "commentary"
+                    }
+                }
+                cleaned.append(fuzzy.to_record(extra=extra_fields))
+            except (ValidationError, TypeError, ValueError):
+                kept = dict(raw)
+                kept[value_field] = float(value)
+                kept["sample_size"] = int(clean.sample_size)
+                cleaned.append(kept)
+
+        return cleaned
+
+    def research_general_knowledge(
+        self,
+        topic_prompt: str,
+        enforce_validation: bool = False,
+        value_field: str = "rate",
+        hard_floor: Optional[float] = None,
+    ) -> dict:
         """
         通用知识调研能力。
         输入：一段自然语言指令（比如：提取亚洲近视增长率...）
@@ -163,7 +345,15 @@ class ClinicalAgent:
             )
             
             json_str = response.choices[0].message.content
-            return json.loads(json_str)
+            result = json.loads(json_str)
+
+            if enforce_validation and isinstance(result.get("data_points"), list):
+                result["data_points"] = self.validate_and_filter(
+                    result["data_points"],
+                    value_field=value_field,
+                    hard_floor=hard_floor,
+                )
+            return result
             
         except Exception as e:
             print(f"❌ 调研失败: {e}")
@@ -215,7 +405,7 @@ if __name__ == "__main__":
     # real_engine = load_or_create_index(...).as_query_engine(...)
     
     # 这里用 Mock 演示
-    agent = ClinicalAgent(rag_engine=engine)
+    agent = ClinicalAgent()
     
     patient_info = {
         "disease": "原发性开角型青光眼",

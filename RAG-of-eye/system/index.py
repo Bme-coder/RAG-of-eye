@@ -1,6 +1,6 @@
 import sys
 import json
-import os
+from pathlib import Path
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
     QLabel, QComboBox, QFrame, QMessageBox, QGroupBox
@@ -16,6 +16,10 @@ import matplotlib.pyplot as plt
 # 设置中文字体 (防止 Matplotlib 中文乱码)
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial'] 
 plt.rcParams['axes.unicode_minus'] = False
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
+DB_PATH = ARTIFACTS_DIR / "myopia_db.json"
 
 class MyopiaCalculator(QMainWindow):
     def __init__(self):
@@ -35,13 +39,13 @@ class MyopiaCalculator(QMainWindow):
 
     def load_database(self):
         """加载 JSON 字典"""
-        db_path = "myopia_db.json"
-        if not os.path.exists(db_path):
-            QMessageBox.warning(self, "数据缺失", "找不到 myopia_db.json，将使用模拟数据演示。")
+        db_path = DB_PATH
+        if not db_path.exists():
+            QMessageBox.warning(self, "数据缺失", f"找不到 {db_path}，将使用模拟数据演示。")
             return self.get_mock_data()
         
         try:
-            with open(db_path, "r", encoding="utf-8") as f:
+            with db_path.open("r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e:
             QMessageBox.critical(self, "错误", f"数据加载失败: {str(e)}")
