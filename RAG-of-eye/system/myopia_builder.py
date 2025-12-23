@@ -13,6 +13,15 @@ ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
 CONFIG_PATH = ARTIFACTS_DIR / "medical_config.json"
 DB_PATH = ARTIFACTS_DIR / "myopia_db.json"
 
+TREATMENT_KEY_ALIASES = {
+    "Control": "Natural",
+    "Natural": "Natural",
+    "Low-dose Atropine": "Atropine_Low",
+    "Ortho-K": "Ortho_K",
+    "Defocus Glasses": "Defocus_Glasses",
+    "Red Light Therapy": "Red_Light_Therapy",
+}
+
 
 def load_config(path: Path = CONFIG_PATH):
     path = Path(path)
@@ -25,17 +34,29 @@ def load_config(path: Path = CONFIG_PATH):
 
     if isinstance(data, list):
         base_records = data
-        treatments = {}
+        meta = {}
     else:
         base_records = data.get("base_rates", [])
-        # 优先读取新的小写键，但兼容旧版本的大写
-        treatments = data.get("treatments") or data.get("TREATMENTS", {})
+        meta = data.get("meta_schema") or {}
 
     df = pd.DataFrame(base_records)
+    if "mean" in df.columns and "rate" not in df.columns:
+        df["rate"] = df["mean"]
+    if "total_n" in df.columns and "n" not in df.columns:
+        df["n"] = df["total_n"]
+    if "weight_alpha" not in df.columns and "n" in df.columns:
+        df["weight_alpha"] = df["n"].apply(
+            lambda val: float(1.0 / max(1.0, np.sqrt(val))) if pd.notna(val) and val else 0.5
+        )
+    if "treatment" not in df.columns:
+        df["treatment"] = "Control"
+    if "treatment_key" not in df.columns:
+        df["treatment_key"] = df["treatment"].apply(lambda val: TREATMENT_KEY_ALIASES.get(val, sanitize_value(val)))
+
     # Remove columns that contain nested structures (dict/list) before grouping
     drop_cols = []
     for col in df.columns:
-        if col in {"rate", "n", "age", "weight_alpha"}:
+        if col in {"rate", "n", "age", "weight_alpha", "mean", "sd", "total_n"}:
             continue
         if df[col].apply(lambda val: isinstance(val, (dict, list, set))).any():
             drop_cols.append(col)
@@ -44,7 +65,7 @@ def load_config(path: Path = CONFIG_PATH):
     text_noise_cols = [col for col in ("label", "notes") if col in df.columns]
     if text_noise_cols:
         df = df.drop(columns=text_noise_cols)
-    return df, treatments
+    return df, meta
 
 
 def calculate_progression(
@@ -92,18 +113,36 @@ def calculate_progression(
 def sanitize_value(value) -> str:
     if value is None or (isinstance(value, float) and np.isnan(value)):
         return "NA"
-    return str(value).replace(" ", "")
+    return (
+        str(value)
+        .replace(" ", "_")
+        .replace("-", "_")
+        .replace("%", "pct")
+        .replace("/", "_")
+    )
 
 
 def build_dictionary():
     print("🏭 正在启动全量遍历构建...")
 
-    df, treatments = load_config()
+    df, meta_schema = load_config()
     if df.empty:
         print("⚠️ base_rates 数据为空")
         return
 
-    group_cols = [col for col in df.columns if col not in ["rate", "n", "age", "weight_alpha"]]
+    group_cols = [
+        col
+        for col in df.columns
+        if col
+        not in [
+            "rate",
+            "n",
+            "age",
+            "weight_alpha",
+            "treatment",
+            "treatment_key",
+        ]
+    ]
     if not group_cols:
         df["_global"] = "ALL"
         group_cols = ["_global"]
@@ -126,6 +165,11 @@ def build_dictionary():
         lower_lookup = {int(age): float(val) for age, val in zip(fit_result["timeline"], fit_result.get("lower", []))}
         label_parts = [sanitize_value(val) for val in group_key]
         base_label = "_".join(part for part in label_parts if part and part != "NA") or "GLOBAL"
+        treatment_label = group_df["treatment"].iloc[0] if "treatment" in group_df.columns else "Control"
+        treatment_key = group_df["treatment_key"].iloc[0] if "treatment_key" in group_df.columns else sanitize_value(
+            treatment_label
+        )
+        slot_name = TREATMENT_KEY_ALIASES.get(treatment_label, treatment_key)
 
         for age in start_ages:
             for dio in start_diopters:
@@ -133,34 +177,23 @@ def build_dictionary():
                 user_key = f"{base_label}_{age}_{dio}"
                 entry = db.setdefault(user_key, {})
 
-                if "Natural" not in entry:
-                    entry["Natural"] = calculate_progression(
-                        rate_lookup,
-                        upper_lookup,
-                        lower_lookup,
-                        age,
-                        dio,
-                        efficacy=0.0,
-                    )
-
-                for t_key, t_val in treatments.items():
-                    efficacy = t_val.get("efficacy", 0.0)
-                    entry[t_key] = calculate_progression(
-                        rate_lookup,
-                        upper_lookup,
-                        lower_lookup,
-                        age,
-                        dio,
-                        efficacy,
-                    )
+                entry[slot_name] = calculate_progression(
+                    rate_lookup,
+                    upper_lookup,
+                    lower_lookup,
+                    age,
+                    dio,
+                    efficacy=0.0,
+                )
 
                 count += 1
                 if count % 1000 == 0:
                     print(f"   已生成{count} 条...")
 
     ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
+    payload = {"__meta__": meta_schema, **db} if meta_schema else db
     with DB_PATH.open("w", encoding="utf-8") as f:
-        json.dump(db, f)
+        json.dump(payload, f)
 
     print(f"✅ 构建完成！最终生成{count} 条数据 -> {DB_PATH}")
 

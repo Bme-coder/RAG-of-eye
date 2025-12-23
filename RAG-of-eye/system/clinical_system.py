@@ -1,11 +1,20 @@
 import json
 import os
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import chromadb
 import numpy as np
-from scipy.optimize import curve_fit
-from pydantic import BaseModel, Field, ValidationError, root_validator
-from typing import List, Dict, Optional, Any
 from openai import OpenAI
-from rag_core import get_rag_engine
+from pydantic import BaseModel, Field, ValidationError, root_validator
+from scipy.optimize import curve_fit
+
+from llama_index.core import Settings, VectorStoreIndex
+from llama_index.core.query_engine import RetrieverQueryEngine
+from llama_index.core.schema import MetadataFilter, MetadataFilters, FilterOperator
+from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.llms.openai import OpenAI as LlamaOpenAI
+from llama_index.vector_stores.chroma import ChromaVectorStore
 
 # 假设这是你以前写好的 RAG 内核
 # from rag_core import get_engine 
@@ -18,6 +27,11 @@ from rag_core import get_rag_engine
 # engine = MockEngine() 
 
 # ================= 1. 数据结构定义 (Structured Output) =================
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DATA_ROOT = PROJECT_ROOT / "data"
+CHROMA_DB_PATH = DATA_ROOT / "chroma_db"
+CHROMA_COLLECTION = "myopia_medical_papers"
 
 class TreatmentPlan(BaseModel):
     name: str = Field(..., description="治疗方案名称")
@@ -98,18 +112,52 @@ class ClinicalAgent:
     def __init__(self, ):
         from dotenv import load_dotenv
         load_dotenv()
-        print("正在连接 RAG 内核...")
-        self.engine = get_rag_engine()
+        print("???? Chroma ???...")
+        api_base = os.getenv("OPENAI_API_BASE")
+
+        Settings.llm = LlamaOpenAI(model="gpt-4o-mini", temperature=0, api_base=api_base)
+        Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-large", api_base=api_base)
+
+        self.llm_client = OpenAI(base_url=api_base)
+        self.index = self._init_chroma_index()
+        self.default_query_engine = self.build_query_engine()
         self.survey_engine = None
         self.survey_top_k = 40
 
-        # 👇 1. 获取代理地址
-        api_base = os.getenv("OPENAI_API_BASE")
-        
-        # 👇 2. 初始化 OpenAI 客户端时传入 base_url
-        self.llm_client = OpenAI(
-            base_url=api_base # <--- 强制指定
+    def _init_chroma_index(self) -> VectorStoreIndex:
+        client = chromadb.PersistentClient(path=str(CHROMA_DB_PATH))
+        vector_store = ChromaVectorStore(
+            chroma_client=client,
+            collection_name=CHROMA_COLLECTION,
         )
+        return VectorStoreIndex.from_vector_store(vector_store=vector_store)
+
+    def build_metadata_filters(
+        self,
+        ethnicity: Optional[str] = None,
+        age: Optional[int] = None,
+    ) -> Optional[MetadataFilters]:
+        filters = []
+        if ethnicity:
+            filters.append(MetadataFilter(key="ethnicity", value=ethnicity))
+        if age is not None:
+            filters.append(MetadataFilter(key="age_min", operator=FilterOperator.LTE, value=age))
+            filters.append(MetadataFilter(key="age_max", operator=FilterOperator.GTE, value=age))
+        return MetadataFilters(filters=filters) if filters else None
+
+    def build_query_engine(
+        self,
+        similarity_top_k: int = 10,
+        ethnicity: Optional[str] = None,
+        age: Optional[int] = None,
+    ) -> RetrieverQueryEngine:
+        filters = self.build_metadata_filters(ethnicity=ethnicity, age=age)
+        retriever = self.index.as_retriever(
+            similarity_top_k=similarity_top_k,
+            vector_store_kwargs={"mode": "hybrid", "alpha": 0.5},
+            filters=filters,
+        )
+        return RetrieverQueryEngine.from_args(retriever=retriever)
 
     def survey_covariates(self, max_nodes: int = 40) -> Dict[str, str]:
         """
@@ -117,7 +165,7 @@ class ClinicalAgent:
         """
         print(f"🧭 正在执行变量普查，Top-{max_nodes} 节点 ...")
         if self.survey_engine is None or max_nodes != self.survey_top_k:
-            self.survey_engine = get_rag_engine(similarity_top_k=max_nodes)
+            self.survey_engine = self.build_query_engine(similarity_top_k=max_nodes)
             self.survey_top_k = max_nodes
 
         survey_query = (
@@ -318,7 +366,8 @@ class ClinicalAgent:
         
         # 1. 复用你的 RAG 内核进行检索
         # 这里直接把调研指令作为 Query 发给 RAG
-        rag_response = self.engine.query(topic_prompt)
+        engine = self.build_query_engine(similarity_top_k=50)
+        rag_response = engine.query(topic_prompt)
         
         # 2. 复用 LLM 能力进行 JSON 提取
         # 我们构建一个专门的 Prompt 强制输出 JSON
@@ -366,7 +415,7 @@ class ClinicalAgent:
         # 1. RAG 检索 (调用你的内核)
         query = self._generate_search_query(patient_features)
         print(f"检索 Query: {query}")
-        rag_response = self.engine.query(query) # <--- 关键：这里调用了旧代码
+        rag_response = self.default_query_engine.query(query)
         
         # 2. 结构化提取
         plans = self._extract_structured_plans(str(rag_response))

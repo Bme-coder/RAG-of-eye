@@ -1,62 +1,4 @@
 {
-  "base_rates": [
-    {
-      "rate": -1.08,
-      "age": 6.0,
-      "n": null,
-      "weight_alpha": 0.5,
-      "ethnicity": "Asian",
-      "gender": "Male",
-      "notes": "Extracted from the table 'SE Progression (East Asians) (D/year)' for age 6.",
-      "label": "Asian|Male|6",
-      "variables": {
-        "Age": 6,
-        "Ethnicity": "Asian"
-      }
-    },
-    {
-      "rate": -0.6,
-      "age": 6.0,
-      "n": null,
-      "weight_alpha": 0.5,
-      "ethnicity": "Asian",
-      "gender": "Female",
-      "notes": "Extracted from the table 'SE Progression (Europeans) (D/year)' for age 6.",
-      "label": "Asian|Female|6",
-      "variables": {
-        "Age": 6,
-        "Ethnicity": "Asian"
-      }
-    },
-    {
-      "rate": -0.3,
-      "age": 11.0,
-      "n": null,
-      "weight_alpha": 0.5,
-      "ethnicity": "Asian",
-      "gender": "Male",
-      "notes": "Extracted from the table 'SE Progression (East Asians) (D/year)' for age 11.",
-      "label": "Asian|Male|11",
-      "variables": {
-        "Age": 11,
-        "Ethnicity": "Asian"
-      }
-    },
-    {
-      "rate": -0.17,
-      "age": 11.0,
-      "n": null,
-      "weight_alpha": 0.5,
-      "ethnicity": "Asian",
-      "gender": "Female",
-      "notes": "Extracted from the table 'SE Progression (Europeans) (D/year)' for age 11.",
-      "label": "Asian|Female|11",
-      "variables": {
-        "Age": 11,
-        "Ethnicity": "Asian"
-      }
-    }
-  ],
   "treatments": {
     "Atropine_Low": {
       "name": "Low-dose Atropine",
@@ -71,4 +13,4 @@
       "efficacy": 0.4
     }
   }
-}
+}  
