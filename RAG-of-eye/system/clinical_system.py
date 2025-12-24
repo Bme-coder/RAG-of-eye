@@ -5,16 +5,17 @@ from typing import Any, Dict, List, Optional
 
 import chromadb
 import numpy as np
-from openai import OpenAI
+from anthropic import Anthropic
 from pydantic import BaseModel, Field, ValidationError, root_validator
 from scipy.optimize import curve_fit
 
 from llama_index.core import Settings, VectorStoreIndex
 from llama_index.core.query_engine import RetrieverQueryEngine
-from llama_index.core.schema import MetadataFilter, MetadataFilters, FilterOperator
-from llama_index.embeddings.openai import OpenAIEmbedding
-from llama_index.llms.openai import OpenAI as LlamaOpenAI
+from llama_index.core.vector_stores import FilterOperator, MetadataFilter, MetadataFilters
+from llama_index.llms.anthropic import Anthropic as LlamaAnthropic
 from llama_index.vector_stores.chroma import ChromaVectorStore
+
+from embed_utils import build_embedding_from_env
 
 # 假设这是你以前写好的 RAG 内核
 # from rag_core import get_engine 
@@ -32,6 +33,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_ROOT = PROJECT_ROOT / "data"
 CHROMA_DB_PATH = DATA_ROOT / "chroma_db"
 CHROMA_COLLECTION = "myopia_medical_papers"
+DEFAULT_CLAUDE_MODEL = os.getenv("CLAUDE_MODEL_NAME", "claude-3-5-sonnet-20241022")
 
 class TreatmentPlan(BaseModel):
     name: str = Field(..., description="治疗方案名称")
@@ -113,12 +115,26 @@ class ClinicalAgent:
         from dotenv import load_dotenv
         load_dotenv()
         print("???? Chroma ???...")
-        api_base = os.getenv("OPENAI_API_BASE")
+        api_url = os.getenv("ANTHROPIC_API_URL")
+        api_key = os.getenv("ANTHROPIC_API_KEY") or os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise EnvironmentError("Missing ANTHROPIC_API_KEY in environment variables.")
 
-        Settings.llm = LlamaOpenAI(model="gpt-4o-mini", temperature=0, api_base=api_base)
-        Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-large", api_base=api_base)
+        self.claude_model = os.getenv("CLAUDE_MODEL_NAME", DEFAULT_CLAUDE_MODEL)
 
-        self.llm_client = OpenAI(base_url=api_base)
+        Settings.llm = LlamaAnthropic(
+            model=self.claude_model,
+            temperature=0,
+            api_key=api_key,
+            base_url=api_url,
+            max_tokens=1024,
+        )
+        Settings.embed_model = build_embedding_from_env()
+
+        client_kwargs = {"api_key": api_key}
+        if api_url:
+            client_kwargs["base_url"] = api_url
+        self.llm_client = Anthropic(**client_kwargs)
         self.index = self._init_chroma_index()
         self.default_query_engine = self.build_query_engine()
         self.survey_engine = None
@@ -126,10 +142,8 @@ class ClinicalAgent:
 
     def _init_chroma_index(self) -> VectorStoreIndex:
         client = chromadb.PersistentClient(path=str(CHROMA_DB_PATH))
-        vector_store = ChromaVectorStore(
-            chroma_client=client,
-            collection_name=CHROMA_COLLECTION,
-        )
+        collection = client.get_or_create_collection(CHROMA_COLLECTION)
+        vector_store = ChromaVectorStore(chroma_collection=collection)
         return VectorStoreIndex.from_vector_store(vector_store=vector_store)
 
     def build_metadata_filters(
@@ -154,10 +168,47 @@ class ClinicalAgent:
         filters = self.build_metadata_filters(ethnicity=ethnicity, age=age)
         retriever = self.index.as_retriever(
             similarity_top_k=similarity_top_k,
-            vector_store_kwargs={"mode": "hybrid", "alpha": 0.5},
             filters=filters,
         )
         return RetrieverQueryEngine.from_args(retriever=retriever)
+
+    @staticmethod
+    def _collect_text(response) -> str:
+        segments: List[str] = []
+        for block in getattr(response, "content", []) or []:
+            text = getattr(block, "text", None)
+            if text:
+                segments.append(text)
+            elif isinstance(block, dict):
+                maybe_text = block.get("text")
+                if maybe_text:
+                    segments.append(str(maybe_text))
+        return "".join(segments).strip()
+
+    def _invoke_llm(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        *,
+        max_tokens: int = 1024,
+    ) -> str:
+        response = self.llm_client.messages.create(
+            model=self.claude_model,
+            max_output_tokens=max_tokens,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_prompt}],
+        )
+        return self._collect_text(response)
+
+    def invoke_llm(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        *,
+        max_tokens: int = 1024,
+    ) -> str:
+        """对外暴露的 LLM 帮助函数，供 mining_task 等模块复用。"""
+        return self._invoke_llm(system_prompt, user_prompt, max_tokens=max_tokens)
 
     def survey_covariates(self, max_nodes: int = 40) -> Dict[str, str]:
         """
@@ -186,15 +237,11 @@ class ClinicalAgent:
         """
 
         try:
-            response = self.llm_client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a medical literature surveyor. Respond with JSON only."},
-                    {"role": "user", "content": survey_prompt}
-                ],
-                response_format={"type": "json_object"},
+            payload = self._invoke_llm(
+                system_prompt="You are a medical literature surveyor. Respond with JSON only.",
+                user_prompt=survey_prompt,
+                max_tokens=800,
             )
-            payload = response.choices[0].message.content
             survey = CovariateSurvey.model_validate_json(payload)
             return {item.name: item.frequency for item in survey.variables}
         except Exception as exc:
@@ -221,18 +268,16 @@ class ClinicalAgent:
         请严格返回 JSON 格式，包含 name, conditions, cure_rate, side_effects, time_points, recovery_values。
         """
         
-        # 使用 OpenAI 的 JSON Mode (保证格式稳定)
-        response = self.llm_client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "system", "content": "You are a medical data extractor. Output JSON."},
-                      {"role": "user", "content": prompt}],
-            response_format={"type": "json_object"}
+        response_text = self._invoke_llm(
+            system_prompt="You are a medical data extractor. Output JSON.",
+            user_prompt=prompt,
+            max_tokens=1200,
         )
-        
+
         # 这里省略了复杂的 JSON 解析和错误处理，直接假设提取成功
         # 实际开发中建议使用 LangChain 的 OutputParser 或 Pydantic Parser
         try:
-            data = json.loads(response.choices[0].message.content)
+            data = json.loads(response_text)
             plans = [TreatmentPlan(**p) for p in data.get('plans', [])]
             return plans
         except:
@@ -251,11 +296,11 @@ class ClinicalAgent:
         [算法 B] 模型评估 (主观打分)
         """
         prompt = f"作为主任医师，请对方案 '{plan.name}' 进行综合打分(0-100)并给出简短理由。治愈率:{plan.cure_rate}, 副作用:{plan.side_effects}。"
-        res = self.llm_client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}]
+        content = self._invoke_llm(
+            system_prompt="You are an experienced ophthalmologist who explains ratings clearly.",
+            user_prompt=prompt,
+            max_tokens=400,
         )
-        content = res.choices[0].message.content
         # 这里需要再用逻辑提取分数，简化起见直接模拟
         return 85.0, content
 
@@ -384,16 +429,11 @@ class ClinicalAgent:
         """
         
         try:
-            response = self.llm_client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a precise data extractor. Output JSON only."},
-                    {"role": "user", "content": extraction_prompt}
-                ],
-                response_format={"type": "json_object"} # 强制 JSON 模式
+            json_str = self._invoke_llm(
+                system_prompt="You are a precise data extractor. Output JSON only.",
+                user_prompt=extraction_prompt,
+                max_tokens=1200,
             )
-            
-            json_str = response.choices[0].message.content
             result = json.loads(json_str)
 
             if enforce_validation and isinstance(result.get("data_points"), list):

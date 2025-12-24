@@ -66,7 +66,7 @@ def extract_records(agent: ClinicalAgent, ethnicity: str, age: int, treatment_cf
     try:
         rag_response = engine.query(query_text)
     except Exception as exc:
-        print(f"⚠️ 检索失败: {ethnicity} age {age} {treatment_cfg['name']} -> {exc}")
+        print(f"[WARN] 检索失败: {ethnicity} age {age} {treatment_cfg['name']} -> {exc}")
         return []
 
     prompt = EXTRACTION_PROMPT.format(
@@ -76,23 +76,20 @@ def extract_records(agent: ClinicalAgent, ethnicity: str, age: int, treatment_cf
         context=str(rag_response)[:5000],
     )
     try:
-        response = agent.llm_client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a structured data extractor. Output JSON only."},
-                {"role": "user", "content": prompt},
-            ],
-            response_format={"type": "json_object"},
+        response_text = agent.invoke_llm(
+            system_prompt="You are a structured data extractor. Output JSON only.",
+            user_prompt=prompt,
+            max_tokens=1200,
         )
-        payload = json.loads(response.choices[0].message.content)
+        payload = json.loads(response_text)
         return payload.get("records", [])
     except Exception as exc:
-        print(f"⚠️ LLM 抽取失败: {ethnicity} age {age} {treatment_cfg['name']} -> {exc}")
+        print(f"[WARN] LLM 抽取失败: {ethnicity} age {age} {treatment_cfg['name']} -> {exc}")
         return []
 
 
 def run_mining_job():
-    print("⛏️  正在启动饱和式挖掘 (Myopia Task)...")
+    print("[INFO] 正在启动饱和式挖掘 (Myopia Task)...")
     agent = ClinicalAgent()
     aggregated_rows: List[Dict] = []
 
@@ -115,7 +112,7 @@ def run_mining_job():
                 )
 
     if not aggregated_rows:
-        print("❌ 未生成任何有效数据，请检查文献或提示词。")
+        print("[ERROR] 未生成任何有效数据，请检查文献或提示词。")
         return
 
     meta_schema = {
@@ -135,7 +132,7 @@ def run_mining_job():
     with CONFIG_PATH.open("w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=False)
 
-    print(f"\n🎉 饱和式挖掘完成，共生成 {len(aggregated_rows)} 条聚合记录 -> {CONFIG_PATH}")
+    print(f"\n[INFO] 饱和式挖掘完成，共生成 {len(aggregated_rows)} 条聚合记录 -> {CONFIG_PATH}")
 
 
 if __name__ == "__main__":
