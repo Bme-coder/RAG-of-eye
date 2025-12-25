@@ -1,2 +1,3 @@
 # .gitignore
 .env
+RAG-of-eye/data/chroma_db/
