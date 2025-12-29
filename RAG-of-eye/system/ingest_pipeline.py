@@ -133,15 +133,25 @@ def auto_tag_text(llm_client: OpenAI, text: str) -> Dict[str, Any]:
             )
             payload = json.loads(payload_text)
             payload.setdefault("treatment_tags", [])
-            return payload
+            return _postprocess_tags(text, payload)
         except Exception:
             LLM_AVAILABLE = False
-    return _heuristic_tags(text)
+    return _postprocess_tags(text, _heuristic_tags(text))
 
 
 def _heuristic_tags(text: str) -> Dict[str, Any]:
     lowered = text.lower()
-    if any(keyword in lowered for keyword in ["chinese", "taiwan", "hong kong", "singapore", "japan", "korea"]):
+    asian_keywords = [
+        "chinese",
+        "taiwan",
+        "hong kong",
+        "singapore",
+        "japan",
+        "korea",
+        "asian",
+        "asia",
+    ]
+    if any(keyword in lowered for keyword in asian_keywords):
         ethnicity = "Asian"
     elif any(keyword in lowered for keyword in ["caucasian", "white", "europe", "western", "usa", "american"]):
         ethnicity = "Caucasian"
@@ -181,6 +191,37 @@ def _heuristic_tags(text: str) -> Dict[str, Any]:
         "treatment_tags": treatment_tags,
         "study_type": study_type,
     }
+
+
+def _postprocess_tags(text: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Normalize obvious issues from LLM output (ethnicity, age order, etc.)."""
+    cleaned = dict(payload)
+    lowered = text.lower()
+
+    ethnicity = cleaned.get("ethnicity")
+    if "asian" in lowered and ethnicity != "Asian":
+        cleaned["ethnicity"] = "Asian"
+    elif any(word in lowered for word in ["caucasian", "europe", "western", "white"]):
+        cleaned.setdefault("ethnicity", "Caucasian")
+
+    age_min = cleaned.get("age_min")
+    age_max = cleaned.get("age_max")
+    try:
+        if age_min is not None:
+            age_min = int(age_min)
+        if age_max is not None:
+            age_max = int(age_max)
+    except (TypeError, ValueError):
+        age_min = cleaned.get("age_min")
+        age_max = cleaned.get("age_max")
+
+    if isinstance(age_min, int) and isinstance(age_max, int):
+        if age_min > age_max:
+            age_min, age_max = age_max, age_min
+        cleaned["age_min"] = age_min
+        cleaned["age_max"] = age_max
+
+    return cleaned
 
 
 def chunk_and_tag_documents(llm_client: OpenAI, documents: list[Document]) -> list[Document]:

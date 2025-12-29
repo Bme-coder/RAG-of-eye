@@ -56,7 +56,8 @@ def fit_gpr_curve(
         y_mean = np.full_like(timeline, mean_rate, dtype=float)
         y_std = np.full_like(timeline, 0.1, dtype=float)
 
-    ci = 1.96 * y_std
+    # ci = 1.96 * y_std
+    ci = 0.67 * y_std
     return {
         "timeline": timeline.tolist(),
         "mean_curve": y_mean.tolist(),

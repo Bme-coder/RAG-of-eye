@@ -106,6 +106,12 @@ python system/myopia_builder.py
 ```
 - **输出**：`artifacts/myopia_db.json`，包含近 2 万组合的曲线参数。
 
+### 一键运行（Pipeline Codex）
+```bash
+python system/pipeline_codex.py
+```
+- 默认顺序等价于 `ingest → mining → builder`，可通过 `--steps mining builder` 之类的参数执行子集，`--ignore-errors` 可在某步失败时继续。
+
 ### 第 5 步（可选）：前端集成
 - Web：`python -m http.server` 后访问 `system/index.html`。
 - Desktop：`python system/new_index.py`（PyQt6 GUI）。
