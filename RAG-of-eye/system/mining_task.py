@@ -32,18 +32,18 @@ TREATMENTS = [
 EXTRACTION_PROMPT = """
 You are a clinical research meta-analyst. Extract all available numerical datapoints
 for the cohort described below. Respond with JSON matching:
-{
+{{
   "records": [
-    {
+    {{
       "source_id": "Paper_ID_or_DOI",
       "mean": -0.85,
       "sd": 0.22,
       "n": 120,
       "treatment_detail": "0.01% atropine nightly",
       "notes": "Any caveats or CI conversion logic"
-    }
+    }}
   ]
-}
+}}
 Rules:
 - Values represent diopters/year (negative for progression).
 - Include SD whenever possible. If only CI is provided, convert to SD (SD ≈ (upper-lower)/3.92).
@@ -81,7 +81,23 @@ def extract_records(agent: ClinicalAgent, ethnicity: str, age: int, treatment_cf
             user_prompt=prompt,
             max_tokens=1200,
         )
-        payload = json.loads(response_text)
+        cleaned = response_text.strip()
+        if cleaned.startswith("```"):
+            parts = cleaned.split("```")
+            # pattern: ```json\n{...}\n```
+            if len(parts) >= 3:
+                cleaned = parts[1]
+            else:
+                cleaned = cleaned.strip("`")
+        if cleaned.lower().startswith("json"):
+            cleaned = cleaned[4:].lstrip()
+        if not cleaned:
+            raise ValueError("LLM 返回为空，无法解析 JSON。")
+        try:
+            payload = json.loads(cleaned)
+        except json.JSONDecodeError:
+            print(f"[DEBUG] 原始 LLM 输出 ({ethnicity}, age {age}, {treatment_cfg['name']}): {response_text!r}")
+            raise
         return payload.get("records", [])
     except Exception as exc:
         print(f"[WARN] LLM 抽取失败: {ethnicity} age {age} {treatment_cfg['name']} -> {exc}")

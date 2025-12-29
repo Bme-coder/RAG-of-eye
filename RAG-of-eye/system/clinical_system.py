@@ -5,14 +5,14 @@ from typing import Any, Dict, List, Optional
 
 import chromadb
 import numpy as np
-from anthropic import Anthropic
+from openai import OpenAI
 from pydantic import BaseModel, Field, ValidationError, root_validator
 from scipy.optimize import curve_fit
 
 from llama_index.core import Settings, VectorStoreIndex
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.vector_stores import FilterOperator, MetadataFilter, MetadataFilters
-from llama_index.llms.anthropic import Anthropic as LlamaAnthropic
+from llama_index.llms.openai import OpenAI as LlamaOpenAI
 from llama_index.vector_stores.chroma import ChromaVectorStore
 
 from embed_utils import build_embedding_from_env
@@ -33,7 +33,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_ROOT = PROJECT_ROOT / "data"
 CHROMA_DB_PATH = DATA_ROOT / "chroma_db"
 CHROMA_COLLECTION = "myopia_medical_papers"
-DEFAULT_CLAUDE_MODEL = os.getenv("CLAUDE_MODEL_NAME", "claude-3-5-sonnet-20241022")
+DEFAULT_LLM_MODEL = (
+    os.getenv("LLM_MODEL_NAME")
+    or os.getenv("CLAUDE_MODEL_NAME")
+    or "gpt-4o-mini"
+)
 
 class TreatmentPlan(BaseModel):
     name: str = Field(..., description="治疗方案名称")
@@ -115,18 +119,22 @@ class ClinicalAgent:
         from dotenv import load_dotenv
         load_dotenv()
         print("???? Chroma ???...")
-        api_url = os.getenv("ANTHROPIC_API_URL")
-        api_key = os.getenv("ANTHROPIC_API_KEY") or os.getenv("OPENAI_API_KEY")
+        api_url = os.getenv("OPENAI_API_BASE") or os.getenv("ANTHROPIC_API_URL")
+        api_key = os.getenv("OPENAI_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
         if not api_key:
-            raise EnvironmentError("Missing ANTHROPIC_API_KEY in environment variables.")
+            raise EnvironmentError("Missing OPENAI_API_KEY in environment variables.")
 
-        self.claude_model = os.getenv("CLAUDE_MODEL_NAME", DEFAULT_CLAUDE_MODEL)
+        self.llm_model = (
+            os.getenv("LLM_MODEL_NAME")
+            or os.getenv("CLAUDE_MODEL_NAME")
+            or DEFAULT_LLM_MODEL
+        )
 
-        Settings.llm = LlamaAnthropic(
-            model=self.claude_model,
+        Settings.llm = LlamaOpenAI(
+            model=self.llm_model,
             temperature=0,
             api_key=api_key,
-            base_url=api_url,
+            api_base=api_url,
             max_tokens=1024,
         )
         Settings.embed_model = build_embedding_from_env()
@@ -134,7 +142,7 @@ class ClinicalAgent:
         client_kwargs = {"api_key": api_key}
         if api_url:
             client_kwargs["base_url"] = api_url
-        self.llm_client = Anthropic(**client_kwargs)
+        self.llm_client = OpenAI(**client_kwargs)
         self.index = self._init_chroma_index()
         self.default_query_engine = self.build_query_engine()
         self.survey_engine = None
@@ -174,16 +182,20 @@ class ClinicalAgent:
 
     @staticmethod
     def _collect_text(response) -> str:
-        segments: List[str] = []
-        for block in getattr(response, "content", []) or []:
-            text = getattr(block, "text", None)
-            if text:
-                segments.append(text)
-            elif isinstance(block, dict):
-                maybe_text = block.get("text")
-                if maybe_text:
-                    segments.append(str(maybe_text))
-        return "".join(segments).strip()
+        if hasattr(response, "choices") and response.choices:
+            message = response.choices[0].message
+            content = getattr(message, "content", "") or ""
+            if isinstance(content, str):
+                return content.strip()
+            if isinstance(content, list):
+                pieces: List[str] = []
+                for item in content:
+                    if isinstance(item, str):
+                        pieces.append(item)
+                    elif isinstance(item, dict) and item.get("text"):
+                        pieces.append(str(item["text"]))
+                return "".join(pieces).strip()
+        return ""
 
     def _invoke_llm(
         self,
@@ -192,11 +204,14 @@ class ClinicalAgent:
         *,
         max_tokens: int = 1024,
     ) -> str:
-        response = self.llm_client.messages.create(
-            model=self.claude_model,
-            max_output_tokens=max_tokens,
-            system=system_prompt,
-            messages=[{"role": "user", "content": user_prompt}],
+        response = self.llm_client.chat.completions.create(
+            model=self.llm_model,
+            max_tokens=max_tokens,
+            temperature=0,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
         )
         return self._collect_text(response)
 

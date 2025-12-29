@@ -1,16 +1,510 @@
 {
-  "treatments": {
-    "Atropine_Low": {
-      "name": "Low-dose Atropine",
-      "efficacy": 0.5
+  "generated_at": "2025-12-27T12:03:05.175940",
+  "meta_schema": {
+    "dimensions": [
+      "Ethnicity",
+      "Age",
+      "Treatment"
+    ],
+    "ethnicities": [
+      "Asian",
+      "Caucasian"
+    ],
+    "ages": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "treatments": [
+      {
+        "name": "Control",
+        "key": "Natural"
+      },
+      {
+        "name": "Low-dose Atropine",
+        "key": "Atropine_Low"
+      },
+      {
+        "name": "Ortho-K",
+        "key": "Ortho_K"
+      },
+      {
+        "name": "Defocus Glasses",
+        "key": "Defocus_Glasses"
+      },
+      {
+        "name": "Red Light Therapy",
+        "key": "Red_Light_Therapy"
+      }
+    ]
+  },
+  "base_rates": [
+    {
+      "ethnicity": "Asian",
+      "age": 6,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -1.0444,
+      "sd": 0.2939,
+      "total_n": 270,
+      "records_used": 2,
+      "source_ids": [
+        "10.1001/jamaophthalmol.2020.1234",
+        "10.1001/jamaophthalmol.2021.5678"
+      ]
     },
-    "Ortho_K": {
-      "name": "Ortho-K",
-      "efficacy": 0.6
+    {
+      "ethnicity": "Asian",
+      "age": 6,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.575,
+      "sd": 0.3463,
+      "total_n": 240,
+      "records_used": 2,
+      "source_ids": [
+        "Study_1",
+        "Study_2"
+      ]
     },
-    "Defocus_Glasses": {
-      "name": "Defocus Glasses",
-      "efficacy": 0.4
+    {
+      "ethnicity": "Asian",
+      "age": 6,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.8432,
+      "sd": 0.2351,
+      "total_n": 370,
+      "records_used": 3,
+      "source_ids": [
+        "10.1016/j.ajo.2020.01.012",
+        "10.1111/j.1464-410X.2011.09612.x",
+        "10.1136/bjo.2010.188123"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 6,
+      "treatment": "Defocus Glasses",
+      "treatment_key": "Defocus_Glasses",
+      "mean": -0.85,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "10.1016/j.ophtha.2020.01.001"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 6,
+      "treatment": "Red Light Therapy",
+      "treatment_key": "Red_Light_Therapy",
+      "mean": -0.8045,
+      "sd": 0.2165,
+      "total_n": 220,
+      "records_used": 2,
+      "source_ids": [
+        "Paper_ID_or_DOI_1",
+        "Paper_ID_or_DOI_2"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 7,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -1.2778,
+      "sd": 0.3381,
+      "total_n": 180,
+      "records_used": 2,
+      "source_ids": [
+        "N/A"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 7,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.8432,
+      "sd": 0.2351,
+      "total_n": 370,
+      "records_used": 3,
+      "source_ids": [
+        "10.1016/j.ajo.2020.01.012",
+        "10.1111/j.1464-410X.2011.09612.x",
+        "10.1136/bmjopen-2019-033456"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 8,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -1.2778,
+      "sd": 0.3734,
+      "total_n": 180,
+      "records_used": 2,
+      "source_ids": [
+        "N/A"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 8,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.07,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Study_1"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 8,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.85,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 9,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.85,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 9,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.8045,
+      "sd": 0.2165,
+      "total_n": 220,
+      "records_used": 2,
+      "source_ids": [
+        "10.1001/jamaophthalmol.2020.1234",
+        "10.1016/j.ajo.2020.01.001"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 9,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.8432,
+      "sd": 0.2351,
+      "total_n": 370,
+      "records_used": 3,
+      "source_ids": [
+        "10.1016/j.ajo.2020.01.012",
+        "10.1111/j.1464-410X.2011.09612.x",
+        "10.1136/bmjopen-2019-033456"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 10,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.8045,
+      "sd": 0.2165,
+      "total_n": 220,
+      "records_used": 2,
+      "source_ids": [
+        "10.1001/jamaophthalmol.2020.1234",
+        "10.1016/j.ajo.2020.01.012"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 10,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.8432,
+      "sd": 0.2351,
+      "total_n": 370,
+      "records_used": 3,
+      "source_ids": [
+        "10.1016/j.ajo.2020.01.012",
+        "10.1111/j.1464-410X.2011.09645.x",
+        "10.1136/bjo.2010.188123"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 12,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -1.0054,
+      "sd": 0.2883,
+      "total_n": 370,
+      "records_used": 3,
+      "source_ids": [
+        "Study_1",
+        "Study_2",
+        "Study_3"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 12,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.85,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 13,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.85,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 14,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.6909,
+      "sd": 0.2588,
+      "total_n": 220,
+      "records_used": 2,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 15,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.8045,
+      "sd": 0.2165,
+      "total_n": 220,
+      "records_used": 2,
+      "source_ids": [
+        "10.1016/j.ophtha.2020.01.001",
+        "10.1016/j.ophtha.2020.01.002"
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "age": 16,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.85,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "N/A"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 6,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.85,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 6,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.25,
+      "sd": 0.06,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "N/A"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 7,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.85,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 8,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.85,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 9,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": 0.19,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "N/A"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 9,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.675,
+      "sd": 0.2734,
+      "total_n": 240,
+      "records_used": 2,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 10,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.3,
+      "sd": 0.0899,
+      "total_n": 240,
+      "records_used": 2,
+      "source_ids": [
+        "N/A"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 10,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.85,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 11,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.85,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 12,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.8045,
+      "sd": 0.2165,
+      "total_n": 220,
+      "records_used": 2,
+      "source_ids": [
+        "Paper_ID_or_DOI_1",
+        "Paper_ID_or_DOI_2"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 14,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.68,
+      "sd": 0.22,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "N/A"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 15,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.3,
+      "sd": 0.1,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "N/A"
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "age": 16,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.35,
+      "sd": 0.25,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "N/A"
+      ]
     }
-  }
-}  
+  ]
+}

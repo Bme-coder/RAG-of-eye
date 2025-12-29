@@ -20,7 +20,7 @@ graph TD
     DB -->|9. 零延迟调用| Frontend[Web / Desktop]
 ```
 
-- **Claude 3.5 Sonnet**：所有 LLM 推理统一走 Anthropic API（`.env` 中配置 `ANTHROPIC_API_KEY`/`ANTHROPIC_API_URL`）。
+- **GPT-4o mini**：所有 LLM 推理统一走 OpenAI 兼容 API（`.env` 中配置 `OPENAI_API_KEY`/`OPENAI_API_BASE`）。
 - **Embedding 双模切换**：`embed_utils.py` 封装了 `EMBED_PROVIDER`（`local`=HuggingFace、`api`=OpenAI Embedding）。只改 `.env` 即可切换。
 - **ingest_pipeline**：PDF→Claude 元数据→SentenceSplitter→Chroma，保证后续检索能按民族/年龄/治疗过滤。
 

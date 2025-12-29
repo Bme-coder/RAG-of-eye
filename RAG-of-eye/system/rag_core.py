@@ -18,7 +18,7 @@ from llama_parse import LlamaParse
 from llama_index.core.node_parser import MarkdownElementNodeParser
 
 # --- 集成导入 ---
-from llama_index.llms.anthropic import Anthropic as LlamaAnthropic
+from llama_index.llms.openai import OpenAI as LlamaOpenAI
 from llama_index.core.postprocessor import LLMRerank
 
 from embed_utils import build_embedding_from_env
@@ -34,7 +34,11 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_ROOT = PROJECT_ROOT / "data"
 ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
-LLM_MODEL = os.getenv("CLAUDE_MODEL_NAME", "claude-3-5-sonnet-20241022")
+LLM_MODEL = (
+    os.getenv("LLM_MODEL_NAME")
+    or os.getenv("CLAUDE_MODEL_NAME")
+    or "gpt-4o-mini"
+)
 DEFAULT_PAPERS_DIR = str((DATA_ROOT / "raw" / "medical_papers").resolve())
 DEFAULT_STORAGE_DIR = str((DATA_ROOT / "index" / "paper_storage_vlm_structure").resolve())
 
@@ -42,8 +46,8 @@ def check_api_keys():
     """检查必要环境变量"""
     load_dotenv()
     missing = []
-    if "ANTHROPIC_API_KEY" not in os.environ:
-        missing.append("ANTHROPIC_API_KEY")
+    if "OPENAI_API_KEY" not in os.environ and "ANTHROPIC_API_KEY" not in os.environ:
+        missing.append("OPENAI_API_KEY")
     if "LLAMA_CLOUD_API_KEY" not in os.environ:
         missing.append("LLAMA_CLOUD_API_KEY")
     
@@ -55,11 +59,11 @@ def check_api_keys():
 def setup_global_settings():
     """配置全局模型"""
     if Settings.llm is None: 
-        print("--- 配置全局模型 (Claude 3.5 Sonnet) ---")
+        print("--- 配置全局模型 (GPT-4o mini) ---")
         
         # 👇 1. 显式获取 .env 里的代理地址
-        api_url = os.getenv("ANTHROPIC_API_URL")
-        api_key = os.getenv("ANTHROPIC_API_KEY") or os.getenv("OPENAI_API_KEY")
+        api_url = os.getenv("OPENAI_API_BASE") or os.getenv("ANTHROPIC_API_URL")
+        api_key = os.getenv("OPENAI_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
         if api_url:
             print(f"🌍 使用代理地址: {api_url}")
 
@@ -67,11 +71,11 @@ def setup_global_settings():
         Settings.embed_model = build_embedding_from_env()
         
         # 👇 3. 传给 LLM 模型
-        Settings.llm = LlamaAnthropic(
+        Settings.llm = LlamaOpenAI(
             model=LLM_MODEL,
             temperature=0,
             api_key=api_key,
-            base_url=api_url,
+            api_base=api_url,
             max_tokens=1024,
         )
 

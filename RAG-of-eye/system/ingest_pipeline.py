@@ -27,18 +27,25 @@ from llama_index.core import (
     VectorStoreIndex,
 )
 from llama_index.core.node_parser import SentenceSplitter
-from anthropic import Anthropic
-from llama_index.llms.anthropic import Anthropic as LlamaAnthropic
+from openai import OpenAI
+from llama_index.llms.openai import OpenAI as LlamaOpenAI
 from llama_index.vector_stores.chroma import ChromaVectorStore
 
 from embed_utils import build_embedding_from_env
+
+# 提前加载 .env，确保 Hugging Face 等全局客户端能读取镜像配置
+load_dotenv()
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_ROOT = PROJECT_ROOT / "data"
 RAW_PAPERS_DIR = DATA_ROOT / "raw" / "medical_papers"
 CHROMA_DIR = DATA_ROOT / "chroma_db"
 LLM_AVAILABLE = True
-CLAUDE_MODEL = os.getenv("CLAUDE_MODEL_NAME", "claude-3-5-sonnet-20241022")
+LLM_MODEL = (
+    os.getenv("LLM_MODEL_NAME")
+    or os.getenv("CLAUDE_MODEL_NAME")
+    or "gpt-4o-mini"
+)
 
 AUTO_TAG_PROMPT = """
 Analyze the following medical excerpt and respond with JSON:
@@ -59,58 +66,66 @@ Context:
 """
 
 
-def _ensure_env_and_settings() -> Anthropic:
+def _ensure_env_and_settings() -> OpenAI:
     load_dotenv()
-    api_key = os.getenv("ANTHROPIC_API_KEY") or os.getenv("OPENAI_API_KEY")
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
-        raise EnvironmentError("Missing ANTHROPIC_API_KEY for Claude access.")
-    api_url = os.getenv("ANTHROPIC_API_URL")
+        raise EnvironmentError("Missing OPENAI_API_KEY for LLM access.")
+    api_url = os.getenv("OPENAI_API_BASE") or os.getenv("ANTHROPIC_API_URL")
 
     client_kwargs = {"api_key": api_key}
     if api_url:
         client_kwargs["base_url"] = api_url
-    llm_client = Anthropic(**client_kwargs)
+    llm_client = OpenAI(**client_kwargs)
 
-    Settings.llm = LlamaAnthropic(
-        model=CLAUDE_MODEL,
+    Settings.llm = LlamaOpenAI(
+        model=LLM_MODEL,
         temperature=0,
         api_key=api_key,
-        base_url=api_url,
+        api_base=api_url,
         max_tokens=1024,
     )
     Settings.embed_model = build_embedding_from_env()
     return llm_client
 
 
-def _claude_text(
-    llm_client: Anthropic,
+def _llm_text(
+    llm_client: OpenAI,
     *,
     system_prompt: str,
     user_prompt: str,
     max_tokens: int = 800,
 ) -> str:
-    response = llm_client.messages.create(
-        model=CLAUDE_MODEL,
-        max_output_tokens=max_tokens,
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_prompt}],
+    response = llm_client.chat.completions.create(
+        model=LLM_MODEL,
+        max_tokens=max_tokens,
+        temperature=0,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
     )
-    chunks: list[str] = []
-    for block in getattr(response, "content", []) or []:
-        text = getattr(block, "text", None)
-        if text:
-            chunks.append(text)
-        elif isinstance(block, dict) and block.get("text"):
-            chunks.append(str(block["text"]))
-    return "".join(chunks).strip()
+    message = response.choices[0].message
+    content = getattr(message, "content", "") or ""
+    if isinstance(content, str):
+        return content.strip()
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, str):
+                parts.append(item)
+            elif isinstance(item, dict) and item.get("text"):
+                parts.append(str(item["text"]))
+        return "".join(parts).strip()
+    return str(content).strip()
 
 
-def auto_tag_text(llm_client: Anthropic, text: str) -> Dict[str, Any]:
+def auto_tag_text(llm_client: OpenAI, text: str) -> Dict[str, Any]:
     global LLM_AVAILABLE
     prompt = AUTO_TAG_PROMPT.format(context=text[:3000])
     if LLM_AVAILABLE:
         try:
-            payload_text = _claude_text(
+            payload_text = _llm_text(
                 llm_client,
                 system_prompt="You are a medical metadata extractor. Output JSON only.",
                 user_prompt=prompt,
@@ -168,7 +183,7 @@ def _heuristic_tags(text: str) -> Dict[str, Any]:
     }
 
 
-def chunk_and_tag_documents(llm_client: Anthropic, documents: list[Document]) -> list[Document]:
+def chunk_and_tag_documents(llm_client: OpenAI, documents: list[Document]) -> list[Document]:
     splitter = SentenceSplitter(chunk_size=1024, chunk_overlap=200)
     processed_docs: list[Document] = []
     for doc in documents:
