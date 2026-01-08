@@ -1,9 +1,11 @@
 import sys
 import json
+import html
 from pathlib import Path
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
-    QLabel, QComboBox, QFrame, QMessageBox, QGroupBox
+    QLabel, QComboBox, QFrame, QMessageBox, QGroupBox, QDialog,
+    QTextEdit, QDialogButtonBox
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QColor
@@ -30,6 +32,9 @@ class MyopiaCalculator(QMainWindow):
         
         # 1. 加载数据
         self.db = self.load_database()
+        self.scatter_collection = None
+        self.scatter_records = []
+        self.pick_cid = None
         
         # 2. 初始化 UI
         self.init_ui()
@@ -119,6 +124,7 @@ class MyopiaCalculator(QMainWindow):
         # 1. 左侧图表 (Matplotlib)
         self.figure = Figure(figsize=(8, 5), dpi=100, facecolor='#ffffff')
         self.canvas = FigureCanvas(self.figure)
+        self.pick_cid = self.canvas.mpl_connect("pick_event", self.on_point_click)
         content_layout.addWidget(self.canvas, stretch=2)
 
         # 2. 右侧数据面板
@@ -228,13 +234,44 @@ class MyopiaCalculator(QMainWindow):
         ax.plot(treatment['timeline'], treatment['mean'], color='#27ae60', linewidth=3, label='干预后 (With Management)')
         ax.fill_between(treatment['timeline'], treatment['upper'], treatment['lower'], color='#27ae60', alpha=0.2)
 
+        scatter_records = []
+        scatter_x, scatter_y = [], []
+        for dataset in (natural, treatment):
+            for record in dataset.get("raw_evidence") or []:
+                age_point = record.get("age_point")
+                mean_val = record.get("mean")
+                if age_point is None or mean_val is None:
+                    continue
+                try:
+                    scatter_x.append(float(age_point))
+                    scatter_y.append(float(mean_val))
+                    scatter_records.append(record)
+                except (TypeError, ValueError):
+                    continue
+
+        if scatter_x:
+            self.scatter_collection = ax.scatter(
+                scatter_x,
+                scatter_y,
+                color="#c0392b",
+                s=40,
+                zorder=5,
+                picker=5,
+                alpha=0.85,
+                label="原始数据"
+            )
+            self.scatter_records = scatter_records
+        else:
+            self.scatter_collection = None
+            self.scatter_records = []
+
         # 设置图表样式
         ax.set_title("屈光度预测曲线 (Refractive Error)", fontsize=12, pad=15)
         ax.set_xlabel("年龄 (Age)")
         ax.set_ylabel("度数 (Diopters)")
         ax.grid(True, linestyle='--', alpha=0.5)
         ax.legend(loc='upper right')
-        
+
         # 设置 Y 轴范围 (让 -8 在下面，0 在上面)
         ax.set_ylim(-9.0, 0.5)
         
@@ -279,7 +316,70 @@ class MyopiaCalculator(QMainWindow):
             "mean": mean,
             "upper": upper if upper else mean,
             "lower": lower if lower else mean,
+            "raw_evidence": entry.get("raw_evidence") or [],
         }
+
+    def on_point_click(self, event):
+        if not self.scatter_collection or event.artist != self.scatter_collection:
+            return
+        if not event.ind:
+            return
+        idx = event.ind[0]
+        if idx >= len(self.scatter_records):
+            return
+        record = self.scatter_records[idx]
+        self.show_provenance_panel(record)
+
+    def show_provenance_panel(self, record: dict):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("数据来源与上下文")
+        layout = QVBoxLayout(dialog)
+
+        text_area = QTextEdit()
+        text_area.setReadOnly(True)
+
+        source_id = record.get("source_id") or "Unknown"
+        sample_size = record.get("n") or record.get("sample_size") or "--"
+        mean_val = record.get("mean")
+        confidence = record.get("confidence") or "--"
+        passage = record.get("full_passage") or record.get("passage") or "未提供完整段落。"
+        highlighted_passage = self.highlight_passage(passage, mean_val)
+
+        html_content = f"""
+        <b>Source ID:</b> {html.escape(str(source_id))}<br>
+        <b>Sample Size (N):</b> {html.escape(str(sample_size))}<br>
+        <b>Mean (D/yr):</b> {html.escape(str(mean_val)) if mean_val is not None else 'NA'}<br>
+        <b>Confidence:</b> {html.escape(str(confidence))}<br><br>
+        <b>Full Context:</b><br>{highlighted_passage}
+        """
+        text_area.setHtml(html_content)
+        layout.addWidget(text_area)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
+        buttons.rejected.connect(dialog.reject)
+        buttons.accepted.connect(dialog.accept)
+        layout.addWidget(buttons)
+
+        dialog.resize(720, 420)
+        dialog.exec()
+
+    def highlight_passage(self, passage: str, mean_val) -> str:
+        if not passage:
+            return "未提供完整段落。"
+        escaped_passage = html.escape(passage)
+        if mean_val is None:
+            return escaped_passage
+        mean_str = str(mean_val)
+        if not mean_str:
+            return escaped_passage
+        escaped_mean = html.escape(mean_str)
+        if escaped_mean in escaped_passage:
+            return escaped_passage.replace(
+                escaped_mean,
+                f"<span style='background-color: #ffeb3b'>{escaped_mean}</span>",
+                1,
+            )
+        return escaped_passage
 
     def show_empty_state(self, message: str):
         self.figure.clear()
@@ -289,6 +389,8 @@ class MyopiaCalculator(QMainWindow):
         self.lbl_natural.setText("--")
         self.lbl_managed.setText("--")
         self.lbl_saved.setText("--")
+        self.scatter_collection = None
+        self.scatter_records = []
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

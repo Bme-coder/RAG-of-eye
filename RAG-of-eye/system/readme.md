@@ -116,6 +116,19 @@ python system/pipeline_codex.py
 - Web：`python -m http.server` 后访问 `system/index.html`。
 - Desktop：`python system/new_index.py`（PyQt6 GUI）。
 
+### 第 6 步：下次怎么用？（最佳实践）
+> 终端默认保持“干净”状态，不主动走代理。按照场景输入暗号即可切换到对应模式。
+
+| 场景 | 指令 | 说明 |
+| --- | --- | --- |
+| 跑 RAG 代码，需要连 OpenAI | `proxy_on` | 一键开启工作模式，然后直接运行 Python。若提示连接被拒绝，回到 Windows 端 `ipconfig` 查看最新局域网 IP，并同步更新 `.bashrc` 中的代理地址。 |
+| 下载/同步大模型，国内镜像更快 | `use_mirror` | 切换到镜像模式后再执行下载脚本。下载完成若要继续跑代码，再次输入 `proxy_on` 切回代理。 |
+| 本地改代码，不需联网 | 无操作 | 默认即为最干净的环境，保持原样即可。 |
+
+- `proxy_on`：干活模式，联通 OpenAI/Claude 所需的所有代理环境变量。
+- `use_mirror`：下载模式，路由到国内镜像源以加速模型或依赖获取。
+- `proxy_off`：回到原点，清理代理相关变量，确保终端不乱连。
+
 ---
 
 ## ⚠️ 注意事项

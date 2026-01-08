@@ -55,14 +55,12 @@ def calculate_weighted_statistics(
         if sd is None or sd <= 0:
             sd = default_sd
 
-        cleaned.append(
-            {
-                "mean": mean,
-                "sd": sd,
-                "n": n,
-                "source_id": record.get("source_id") or record.get("source") or record.get("paper_id"),
-            }
-        )
+        evidence_entry = dict(record)
+        evidence_entry["mean"] = mean
+        evidence_entry["sd"] = sd
+        evidence_entry["n"] = n
+        evidence_entry["source_id"] = record.get("source_id") or record.get("source") or record.get("paper_id")
+        cleaned.append(evidence_entry)
 
     if not cleaned:
         return None
@@ -88,4 +86,5 @@ def calculate_weighted_statistics(
         "total_n": total_n,
         "records_used": len(cleaned),
         "source_ids": unique_sources,
+        "raw_evidence": cleaned,
     }

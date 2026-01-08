@@ -35,22 +35,21 @@ for the cohort described below. Respond with JSON matching:
 {{
   "records": [
     {{
-      "source_id": "Paper_ID_or_DOI",
-      "mean": -0.85,
-      "sd": 0.22,
+      "mean": -0.50,
       "n": 120,
+      "source_id": "Paper_ID_or_DOI",
       "treatment_detail": "0.01% atropine nightly",
-      "notes": "Any caveats or CI conversion logic"
+      "confidence": "High",
+      "full_passage": "The LAMP study enrolled 438 children... [COPY THE FULL PARAGRAPH HERE] ...mean progression was -0.50D.", 
+      "notes": "Any caveats"
     }}
   ]
 }}
 Rules:
 - Values represent diopters/year (negative for progression).
-- Include SD whenever possible. If only CI is provided, convert to SD (SD ≈ (upper-lower)/3.92).
-- Never omit `n`, and set conservative estimates if exact sample size is missing.
+- CRITICAL: For `full_passage`, you MUST copy the **ENTIRE PARAGRAPH** or logical text block that contains the data point. Do not truncate it. I need the full context.
+- Never omit `n`.
 - Focus exclusively on {ethnicity} patients around age {age} undergoing "{treatment}".
-- Include multiple records per study if different cohorts exist.
-
 Context:
 {context}
 """

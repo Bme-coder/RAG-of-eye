@@ -36,13 +36,16 @@ TREATMENT_EFFICACIES = {
     "Red_Light_Therapy": 0.60, # ~60%
 }
 
+# 需要保留的复杂字段（列表/字典），用于前端可视化
+PRESERVE_COMPLEX_COLS = {"raw_evidence"}
+
 # ================= 工具函数 =================
 
 def load_config(path: Path = CONFIG_PATH):
     path = Path(path)
     if not path.exists():
         print(f"⚠️ 错误: 找不到 {path}")
-        return pd.DataFrame(), {}
+        return pd.DataFrame(), {}, []
 
     with path.open("r", encoding="utf-8") as f:
         data = json.load(f)
@@ -58,7 +61,7 @@ def load_config(path: Path = CONFIG_PATH):
     df = pd.DataFrame(base_records)
     
     if df.empty:
-        return df, meta
+        return df, meta, base_records
 
     # 字段标准化
     if "mean" in df.columns and "rate" not in df.columns:
@@ -90,6 +93,8 @@ def load_config(path: Path = CONFIG_PATH):
     for col in df.columns:
         if col in {"rate", "n", "age", "weight_alpha", "mean", "sd", "total_n"}:
             continue
+        if col in PRESERVE_COMPLEX_COLS:
+            continue
         # 检查是否包含列表或字典
         if df[col].apply(lambda val: isinstance(val, (dict, list, set))).any():
             drop_cols.append(col)
@@ -102,7 +107,7 @@ def load_config(path: Path = CONFIG_PATH):
     if text_noise_cols:
         df = df.drop(columns=text_noise_cols)
         
-    return df, meta
+    return df, meta, base_records
 
 def sanitize_value(value) -> str:
     """将数值或字符串转换为 URL 安全的字符串"""
@@ -171,7 +176,7 @@ def calculate_progression(
 def build_dictionary():
     print("🏭 正在启动全量构建 (Pivot Mode)...")
 
-    df, meta_schema = load_config()
+    df, meta_schema, _ = load_config()
     if df.empty:
         print("⚠️ base_rates 数据为空，跳过构建。")
         return
@@ -180,7 +185,7 @@ def build_dictionary():
     # 我们要排除掉 rate, treatment 等变化量，只保留人口学特征 (Ethnicity, Gender 等)
     exclude_cols = {
         "rate", "n", "age", "weight_alpha", "mean", "sd", "total_n",
-        "treatment", "treatment_key", "records_used"
+        "treatment", "treatment_key", "records_used", "raw_evidence"
     }
     group_cols = [col for col in df.columns if col not in exclude_cols]
     
@@ -198,11 +203,39 @@ def build_dictionary():
     db: Dict[str, Any] = {}
     count = 0
 
+    def clone_evidence(records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        return [dict(item) for item in records] if records else []
+
     # 3. 按人群 (Cohort) 循环
     # 例如：Group = ("Asian", "Male")
     for group_values, group_df in df.groupby(group_cols, dropna=False):
         if not isinstance(group_values, tuple):
             group_values = (group_values,)
+
+        evidence_by_treatment: Dict[str, List[Dict[str, Any]]] = {}
+        for _, row in group_df.iterrows():
+            t_key = row.get("treatment_key") or "Natural"
+            t_key = TREATMENT_KEY_ALIASES.get(t_key, t_key) or "Natural"
+            age_val = row.get("age")
+            age_point = None
+            if age_val is not None and not pd.isna(age_val):
+                try:
+                    age_point = int(age_val)
+                except (ValueError, TypeError):
+                    try:
+                        age_point = int(float(age_val))
+                    except (ValueError, TypeError):
+                        age_point = None
+            raw_list = row.get("raw_evidence") or []
+            if not isinstance(raw_list, list):
+                continue
+            for evidence in raw_list:
+                if not isinstance(evidence, dict):
+                    continue
+                ev_copy = dict(evidence)
+                ev_copy["age_point"] = age_point
+                ev_copy.setdefault("treatment_key", t_key)
+                evidence_by_treatment.setdefault(t_key, []).append(ev_copy)
 
         # --- A. 提取基准数据 (Natural/Control) ---
         # 我们只用 Control 组的数据来拟合基准曲线
@@ -253,6 +286,8 @@ def build_dictionary():
                     rate_lookup, upper_lookup, lower_lookup,
                     start_age=age, start_diopter=dio, efficacy=0.0
                 )
+                natural_evidence = evidence_by_treatment.get("Natural") or evidence_by_treatment.get("Control") or []
+                entry["Natural"]["raw_evidence"] = clone_evidence(natural_evidence)
 
                 # 2. Treatments (应用 Efficacy)
                 for t_key, efficacy in TREATMENT_EFFICACIES.items():
@@ -262,6 +297,7 @@ def build_dictionary():
                         rate_lookup, upper_lookup, lower_lookup,
                         start_age=age, start_diopter=dio, efficacy=efficacy
                     )
+                    entry[t_key]["raw_evidence"] = clone_evidence(evidence_by_treatment.get(t_key, []))
                 
                 # 写入大表
                 db[user_key] = entry
