@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from analytics import calculate_weighted_statistics
 from clinical_system import ClinicalAgent
@@ -19,6 +19,7 @@ ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
 CONFIG_PATH = ARTIFACTS_DIR / "medical_config.json"
 
 ETHNICITIES = ["Asian", "Caucasian"]
+GENDERS = ["Female", "Male"]
 AGES = list(range(6, 17))
 
 TREATMENTS = [
@@ -49,28 +50,46 @@ Rules:
 - Values represent diopters/year (negative for progression).
 - CRITICAL: For `full_passage`, you MUST copy the **ENTIRE PARAGRAPH** or logical text block that contains the data point. Do not truncate it. I need the full context.
 - Never omit `n`.
-- Focus exclusively on {ethnicity} patients around age {age} undergoing "{treatment}".
+- Focus exclusively on {ethnicity} patients {gender_focus} around age {age} undergoing "{treatment}".
 Context:
 {context}
 """
 
 
-def build_query_text(ethnicity: str, age: int, treatment_query: str) -> str:
-    return f"{ethnicity} children age {age} myopia progression rate {treatment_query}"
+def build_query_text(ethnicity: str, gender: Optional[str], age: int, treatment_query: str) -> str:
+    subject_parts = [ethnicity]
+    if gender:
+        subject_parts.append(f"{gender.lower()} children")
+    else:
+        subject_parts.append("children")
+    subject = " ".join(subject_parts)
+    return f"{subject} age {age} myopia progression rate {treatment_query}"
 
 
-def extract_records(agent: ClinicalAgent, ethnicity: str, age: int, treatment_cfg: Dict[str, str]) -> List[Dict]:
-    engine = agent.build_query_engine(similarity_top_k=50, ethnicity=ethnicity, age=age)
-    query_text = build_query_text(ethnicity, age, treatment_cfg["query"])
+def extract_records(
+    agent: ClinicalAgent,
+    ethnicity: str,
+    gender: Optional[str],
+    age: int,
+    treatment_cfg: Dict[str, str],
+) -> List[Dict]:
+    engine = agent.build_query_engine(similarity_top_k=50, ethnicity=ethnicity, age=age, gender=gender)
+    query_text = build_query_text(ethnicity, gender, age, treatment_cfg["query"])
     try:
         rag_response = engine.query(query_text)
     except Exception as exc:
-        print(f"[WARN] 检索失败: {ethnicity} age {age} {treatment_cfg['name']} -> {exc}")
+        print(f"[WARN] 检索失败: {ethnicity} {gender or 'All'} age {age} {treatment_cfg['name']} -> {exc}")
         return []
+
+    gender_focus = {
+        "Female": "who are female",
+        "Male": "who are male",
+    }.get(gender, "of any gender")
 
     prompt = EXTRACTION_PROMPT.format(
         ethnicity=ethnicity,
         age=age,
+        gender_focus=gender_focus,
         treatment=treatment_cfg["name"],
         context=str(rag_response)[:5000],
     )
@@ -99,7 +118,7 @@ def extract_records(agent: ClinicalAgent, ethnicity: str, age: int, treatment_cf
             raise
         return payload.get("records", [])
     except Exception as exc:
-        print(f"[WARN] LLM 抽取失败: {ethnicity} age {age} {treatment_cfg['name']} -> {exc}")
+        print(f"[WARN] LLM 抽取失败: {ethnicity} {gender or 'All'} age {age} {treatment_cfg['name']} -> {exc}")
         return []
 
 
@@ -109,30 +128,38 @@ def run_mining_job():
     aggregated_rows: List[Dict] = []
 
     for ethnicity in ETHNICITIES:
-        for age in AGES:
-            for treatment in TREATMENTS:
-                print(f"→ {ethnicity} | Age {age} | {treatment['name']}")
-                raw_records = extract_records(agent, ethnicity, age, treatment)
-                stats = calculate_weighted_statistics(raw_records, is_treatment=treatment["is_treatment"])
-                if not stats:
-                    continue
-                aggregated_rows.append(
-                    {
-                        "ethnicity": ethnicity,
-                        "age": age,
-                        "treatment": treatment["name"],
-                        "treatment_key": treatment["key"],
-                        **stats,
-                    }
-                )
+        for gender in GENDERS:
+            for age in AGES:
+                for treatment in TREATMENTS:
+                    print(f"→ {ethnicity} | {gender} | Age {age} | {treatment['name']}")
+                    raw_records = extract_records(agent, ethnicity, gender, age, treatment)
+                    if not raw_records:
+                        fallback_records = extract_records(agent, ethnicity, None, age, treatment)
+                        if fallback_records:
+                            print(f"[INFO] 性别 {gender} 缺少样本，使用性别无关数据兜底。")
+                        raw_records = fallback_records
+                    stats = calculate_weighted_statistics(raw_records, is_treatment=treatment["is_treatment"])
+                    if not stats:
+                        continue
+                    aggregated_rows.append(
+                        {
+                            "ethnicity": ethnicity,
+                            "gender": gender,
+                            "age": age,
+                            "treatment": treatment["name"],
+                            "treatment_key": treatment["key"],
+                            **stats,
+                        }
+                    )
 
     if not aggregated_rows:
         print("[ERROR] 未生成任何有效数据，请检查文献或提示词。")
         return
 
     meta_schema = {
-        "dimensions": ["Ethnicity", "Age", "Treatment"],
+        "dimensions": ["Ethnicity", "Gender", "Age", "Treatment"],
         "ethnicities": ETHNICITIES,
+        "genders": GENDERS,
         "ages": AGES,
         "treatments": [{"name": t["name"], "key": t["key"]} for t in TREATMENTS],
     }

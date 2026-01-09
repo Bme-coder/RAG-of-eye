@@ -158,6 +158,7 @@ class ClinicalAgent:
         self,
         ethnicity: Optional[str] = None,
         age: Optional[int] = None,
+        gender: Optional[str] = None,
     ) -> Optional[MetadataFilters]:
         filters = []
         if ethnicity:
@@ -165,6 +166,8 @@ class ClinicalAgent:
         if age is not None:
             filters.append(MetadataFilter(key="age_min", operator=FilterOperator.LTE, value=age))
             filters.append(MetadataFilter(key="age_max", operator=FilterOperator.GTE, value=age))
+        if gender:
+            filters.append(MetadataFilter(key="gender", value=gender))
         return MetadataFilters(filters=filters) if filters else None
 
     def build_query_engine(
@@ -172,8 +175,9 @@ class ClinicalAgent:
         similarity_top_k: int = 10,
         ethnicity: Optional[str] = None,
         age: Optional[int] = None,
+        gender: Optional[str] = None,
     ) -> RetrieverQueryEngine:
-        filters = self.build_metadata_filters(ethnicity=ethnicity, age=age)
+        filters = self.build_metadata_filters(ethnicity=ethnicity, age=age, gender=gender)
         retriever = self.index.as_retriever(
             similarity_top_k=similarity_top_k,
             filters=filters,

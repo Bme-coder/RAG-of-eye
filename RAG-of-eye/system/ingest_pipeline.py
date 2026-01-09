@@ -51,6 +51,7 @@ AUTO_TAG_PROMPT = """
 Analyze the following medical excerpt and respond with JSON:
 {{
   "ethnicity": "Asian" | "Caucasian" | "Other",
+  "gender": "Female" | "Male" | "Mixed",
   "age_min": int,
   "age_max": int,
   "treatment_tags": [str],
@@ -60,6 +61,7 @@ Rules:
 - Map Chinese, Taiwanese, Hong Kong, Singaporean, Japanese, Korean to "Asian".
 - Map White, European, Western to "Caucasian".
 - Map Hispanic, Black, African-American to "Other".
+- If the study only mentions girls/females, output "Female"; only boys/males -> "Male"; otherwise "Mixed".
 If data is missing, make a conservative estimate but never leave fields null.
 Context:
 {context}
@@ -184,8 +186,18 @@ def _heuristic_tags(text: str) -> Dict[str, Any]:
     else:
         study_type = "Cohort"
 
+    female_words = ["female", "girl", "girls", "women", "woman"]
+    male_words = ["male", "boy", "boys", "men", "man"]
+    if any(word in lowered for word in female_words) and not any(word in lowered for word in male_words):
+        gender = "Female"
+    elif any(word in lowered for word in male_words) and not any(word in lowered for word in female_words):
+        gender = "Male"
+    else:
+        gender = "Mixed"
+
     return {
         "ethnicity": ethnicity,
+        "gender": gender,
         "age_min": age_min,
         "age_max": age_max,
         "treatment_tags": treatment_tags,
@@ -203,6 +215,23 @@ def _postprocess_tags(text: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         cleaned["ethnicity"] = "Asian"
     elif any(word in lowered for word in ["caucasian", "europe", "western", "white"]):
         cleaned.setdefault("ethnicity", "Caucasian")
+
+    gender = cleaned.get("gender")
+    female_words = {"female", "girl", "girls", "women", "woman"}
+    male_words = {"male", "boy", "boys", "men", "man"}
+    if isinstance(gender, str):
+        gender_norm = gender.strip().title()
+        if gender_norm not in {"Female", "Male", "Mixed"}:
+            gender_norm = "Mixed"
+    else:
+        gender_norm = "Mixed"
+    female_in_text = any(word in lowered for word in female_words)
+    male_in_text = any(word in lowered for word in male_words)
+    if female_in_text and not male_in_text:
+        gender_norm = "Female"
+    elif male_in_text and not female_in_text:
+        gender_norm = "Male"
+    cleaned["gender"] = gender_norm
 
     age_min = cleaned.get("age_min")
     age_max = cleaned.get("age_max")

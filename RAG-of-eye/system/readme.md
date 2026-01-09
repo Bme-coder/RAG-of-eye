@@ -42,7 +42,7 @@ graph TD
 ## 📂 文件详解
 
 ### 1. `ingest_pipeline.py`（文献入库）
-- **职责**：将 `data/raw/medical_papers` 内的 PDF 批量解析，Claude 自动生成民族/年龄段/治疗标签，SentenceSplitter 切块后写入 Chroma。
+- **职责**：将 `data/raw/medical_papers` 内的 PDF 批量解析，Claude 自动生成民族/性别/年龄段/治疗标签，SentenceSplitter 切块后写入 Chroma。
 - **关键函数**
   - `_ensure_env_and_settings()`：加载 `.env` 的 Claude/Embedding 配置，保持与主系统一致。
   - `_claude_text()`：统一处理 `messages.create` 的输出，方便 JSON/纯文本切换。
@@ -58,7 +58,7 @@ graph TD
 - `invoke_llm()` 供其它脚本（如 `mining_task.py`）直接调用 Claude。
 
 ### 4. `mining_task.py`（知识矿工）
-- 将民族/年龄/治疗组合写成 Prompt，循环调用 `ClinicalAgent.research_general_knowledge()` 生成 `medical_config.json`。
+- 将民族/性别/年龄/治疗组合写成 Prompt，循环调用 `ClinicalAgent.research_general_knowledge()` 生成 `medical_config.json`。
 
 ### 5. `myopia_builder.py`（数据工厂）
 - 读取 `medical_config.json`，遍历民族 × 性别 × 年龄 × 度数，输出 `myopia_db.json`，供前端零延迟查询。
