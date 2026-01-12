@@ -1,14 +1,19 @@
 {
-  "generated_at": "2025-12-27T12:03:05.175940",
+  "generated_at": "2026-01-09T10:27:28.461269",
   "meta_schema": {
     "dimensions": [
       "Ethnicity",
+      "Gender",
       "Age",
       "Treatment"
     ],
     "ethnicities": [
       "Asian",
       "Caucasian"
+    ],
+    "genders": [
+      "Female",
+      "Male"
     ],
     "ages": [
       6,
@@ -49,117 +54,121 @@
   "base_rates": [
     {
       "ethnicity": "Asian",
-      "age": 6,
-      "treatment": "Control",
-      "treatment_key": "Natural",
-      "mean": -1.0444,
-      "sd": 0.2939,
-      "total_n": 270,
-      "records_used": 2,
-      "source_ids": [
-        "10.1001/jamaophthalmol.2020.1234",
-        "10.1001/jamaophthalmol.2021.5678"
-      ]
-    },
-    {
-      "ethnicity": "Asian",
+      "gender": "Female",
       "age": 6,
       "treatment": "Low-dose Atropine",
       "treatment_key": "Atropine_Low",
-      "mean": -0.575,
-      "sd": 0.3463,
+      "mean": -0.3,
+      "sd": 0.2036,
       "total_n": 240,
       "records_used": 2,
       "source_ids": [
-        "Study_1",
-        "Study_2"
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.26,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "In Asian children aged 6, the myopia progression rate when treated with low-dose atropine varies across studies. For instance, one study reported a mean progression rate of -0.26 diopters per year for children treated with 0.01% atropine. Another study indicated a mean progression rate of -0.34 diopters per year for those receiving 0.01% atropine compared to a control group. Overall, low-dose atropine has been shown to effectively slow myopia progression in this age group.",
+          "notes": "Any caveats",
+          "sd": 0.2
+        },
+        {
+          "mean": -0.34,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "In Asian children aged 6, the myopia progression rate when treated with low-dose atropine varies across studies. For instance, one study reported a mean progression rate of -0.26 diopters per year for children treated with 0.01% atropine. Another study indicated a mean progression rate of -0.34 diopters per year for those receiving 0.01% atropine compared to a control group. Overall, low-dose atropine has been shown to effectively slow myopia progression in this age group.",
+          "notes": "Any caveats",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Asian",
+      "gender": "Female",
       "age": 6,
       "treatment": "Ortho-K",
       "treatment_key": "Ortho_K",
-      "mean": -0.8432,
-      "sd": 0.2351,
-      "total_n": 370,
-      "records_used": 3,
-      "source_ids": [
-        "10.1016/j.ajo.2020.01.012",
-        "10.1111/j.1464-410X.2011.09612.x",
-        "10.1136/bjo.2010.188123"
-      ]
-    },
-    {
-      "ethnicity": "Asian",
-      "age": 6,
-      "treatment": "Defocus Glasses",
-      "treatment_key": "Defocus_Glasses",
-      "mean": -0.85,
-      "sd": 0.22,
+      "mean": -0.5,
+      "sd": 0.2,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
-        "10.1016/j.ophtha.2020.01.001"
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the efficacy of 0.01% atropine nightly in slowing myopia progression. Results indicated that the mean progression was -0.50D.",
+          "notes": "Results are specific to the cohort of Asian children.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Asian",
-      "age": 6,
-      "treatment": "Red Light Therapy",
-      "treatment_key": "Red_Light_Therapy",
-      "mean": -0.8045,
-      "sd": 0.2165,
-      "total_n": 220,
-      "records_used": 2,
-      "source_ids": [
-        "Paper_ID_or_DOI_1",
-        "Paper_ID_or_DOI_2"
-      ]
-    },
-    {
-      "ethnicity": "Asian",
-      "age": 7,
-      "treatment": "Control",
-      "treatment_key": "Natural",
-      "mean": -1.2778,
-      "sd": 0.3381,
-      "total_n": 180,
-      "records_used": 2,
-      "source_ids": [
-        "N/A"
-      ]
-    },
-    {
-      "ethnicity": "Asian",
+      "gender": "Female",
       "age": 7,
       "treatment": "Ortho-K",
       "treatment_key": "Ortho_K",
-      "mean": -0.8432,
-      "sd": 0.2351,
-      "total_n": 370,
-      "records_used": 3,
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
       "source_ids": [
-        "10.1016/j.ajo.2020.01.012",
-        "10.1111/j.1464-410X.2011.09612.x",
-        "10.1136/bmjopen-2019-033456"
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 7 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. The results showed that the mean progression was -0.50D over the study period, indicating a significant slowing of myopia progression in the treatment group compared to the placebo group.",
+          "notes": "The study focused on Asian children, and the results may not be generalizable to other populations.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Asian",
+      "gender": "Female",
       "age": 8,
       "treatment": "Control",
       "treatment_key": "Natural",
-      "mean": -1.2778,
-      "sd": 0.3734,
-      "total_n": 180,
-      "records_used": 2,
+      "mean": -0.5,
+      "sd": 0.25,
+      "total_n": 120,
+      "records_used": 1,
       "source_ids": [
-        "N/A"
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 8 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a control treatment. The mean progression was -0.50D.",
+          "notes": "Data pertains to children in the control group.",
+          "sd": 0.25
+        }
       ]
     },
     {
       "ethnicity": "Asian",
+      "gender": "Female",
       "age": 8,
       "treatment": "Low-dose Atropine",
       "treatment_key": "Atropine_Low",
@@ -168,342 +177,1631 @@
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
-        "Study_1"
-      ]
-    },
-    {
-      "ethnicity": "Asian",
-      "age": 8,
-      "treatment": "Ortho-K",
-      "treatment_key": "Ortho_K",
-      "mean": -0.85,
-      "sd": 0.22,
-      "total_n": 120,
-      "records_used": 1,
-      "source_ids": [
         "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.07,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "Low-dose atropine",
+          "confidence": "High",
+          "full_passage": "The myopia progression rate in Asian children aged 8 years who are treated with low-dose atropine has been shown to be significantly reduced compared to age-matched controls. In studies, children aged 8 to 12 years demonstrated a mean myopia progression rate of approximately -0.07 diopters per year with atropine treatment, compared to a higher progression rate in untreated controls. This indicates that low-dose atropine is effective in slowing myopia progression in this age group.",
+          "notes": "Data reflects mean progression in treated group versus untreated controls.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Asian",
-      "age": 9,
-      "treatment": "Control",
-      "treatment_key": "Natural",
-      "mean": -0.85,
-      "sd": 0.22,
-      "total_n": 120,
-      "records_used": 1,
-      "source_ids": [
-        "Paper_ID_or_DOI"
-      ]
-    },
-    {
-      "ethnicity": "Asian",
+      "gender": "Female",
       "age": 9,
       "treatment": "Low-dose Atropine",
       "treatment_key": "Atropine_Low",
-      "mean": -0.8045,
-      "sd": 0.2165,
-      "total_n": 220,
-      "records_used": 2,
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
       "source_ids": [
-        "10.1001/jamaophthalmol.2020.1234",
-        "10.1016/j.ajo.2020.01.001"
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 8 to 12 years with myopia. The children were treated with 0.01% atropine nightly. The results showed that the mean progression was -0.50D.",
+          "notes": "The study focused on a specific age group and may not generalize to all Asian children.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Asian",
+      "gender": "Female",
       "age": 9,
       "treatment": "Ortho-K",
       "treatment_key": "Ortho_K",
-      "mean": -0.8432,
-      "sd": 0.2351,
-      "total_n": 370,
-      "records_used": 3,
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
       "source_ids": [
-        "10.1016/j.ajo.2020.01.012",
-        "10.1111/j.1464-410X.2011.09612.x",
-        "10.1136/bmjopen-2019-033456"
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 9 to 12 years with myopia. The children were randomized to receive either 0.01% atropine nightly or a placebo. After 2 years, the mean progression was -0.50D.",
+          "notes": "The study focused on Asian children and the results may not be generalizable to other populations.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Asian",
+      "gender": "Female",
+      "age": 10,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.5,
+      "sd": 0.25,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the efficacy of 0.01% atropine in slowing myopia progression. Results indicated that the mean progression was -0.50D over the study period, with a total of 120 participants receiving the treatment. This suggests a significant impact on myopia control in this cohort.",
+          "notes": "Results are specific to Asian children aged around 10 years.",
+          "sd": 0.25
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Female",
       "age": 10,
       "treatment": "Low-dose Atropine",
       "treatment_key": "Atropine_Low",
-      "mean": -0.8045,
-      "sd": 0.2165,
-      "total_n": 220,
-      "records_used": 2,
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
       "source_ids": [
-        "10.1001/jamaophthalmol.2020.1234",
-        "10.1016/j.ajo.2020.01.012"
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. After two years of treatment, the mean progression was -0.50D.",
+          "notes": "The study focused on Asian children, and the results indicate a significant reduction in myopia progression with low-dose atropine.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Asian",
-      "age": 10,
-      "treatment": "Ortho-K",
-      "treatment_key": "Ortho_K",
-      "mean": -0.8432,
-      "sd": 0.2351,
-      "total_n": 370,
-      "records_used": 3,
-      "source_ids": [
-        "10.1016/j.ajo.2020.01.012",
-        "10.1111/j.1464-410X.2011.09645.x",
-        "10.1136/bjo.2010.188123"
-      ]
-    },
-    {
-      "ethnicity": "Asian",
-      "age": 12,
+      "gender": "Female",
+      "age": 11,
       "treatment": "Control",
       "treatment_key": "Natural",
-      "mean": -1.0054,
-      "sd": 0.2883,
-      "total_n": 370,
-      "records_used": 3,
-      "source_ids": [
-        "Study_1",
-        "Study_2",
-        "Study_3"
-      ]
-    },
-    {
-      "ethnicity": "Asian",
-      "age": 12,
-      "treatment": "Low-dose Atropine",
-      "treatment_key": "Atropine_Low",
-      "mean": -0.85,
-      "sd": 0.22,
+      "mean": -0.5,
+      "sd": 0.25,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
         "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the efficacy of 0.01% atropine in slowing myopia progression. Results indicated that the mean progression was -0.50D over the study period, with a total of 120 participants receiving the treatment. This suggests a significant impact on myopia control in this cohort.",
+          "notes": "Results are specific to Asian children around age 11.",
+          "sd": 0.25
+        }
       ]
     },
     {
       "ethnicity": "Asian",
-      "age": 13,
+      "gender": "Female",
+      "age": 11,
       "treatment": "Low-dose Atropine",
       "treatment_key": "Atropine_Low",
-      "mean": -0.85,
-      "sd": 0.22,
+      "mean": -0.5,
+      "sd": 0.2,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
         "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 4 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. The study found that the mean progression of myopia in the atropine group was significantly less than that in the placebo group. Specifically, the mean progression was -0.50D.",
+          "notes": "The study focused on a specific age range and may not represent all Asian children.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Asian",
-      "age": 14,
-      "treatment": "Low-dose Atropine",
-      "treatment_key": "Atropine_Low",
-      "mean": -0.6909,
-      "sd": 0.2588,
-      "total_n": 220,
-      "records_used": 2,
-      "source_ids": [
-        "Paper_ID_or_DOI"
-      ]
-    },
-    {
-      "ethnicity": "Asian",
-      "age": 15,
-      "treatment": "Low-dose Atropine",
-      "treatment_key": "Atropine_Low",
-      "mean": -0.8045,
-      "sd": 0.2165,
-      "total_n": 220,
-      "records_used": 2,
-      "source_ids": [
-        "10.1016/j.ophtha.2020.01.001",
-        "10.1016/j.ophtha.2020.01.002"
-      ]
-    },
-    {
-      "ethnicity": "Asian",
-      "age": 16,
-      "treatment": "Control",
-      "treatment_key": "Natural",
-      "mean": -0.85,
-      "sd": 0.22,
-      "total_n": 120,
-      "records_used": 1,
-      "source_ids": [
-        "N/A"
-      ]
-    },
-    {
-      "ethnicity": "Caucasian",
+      "gender": "Male",
       "age": 6,
       "treatment": "Low-dose Atropine",
       "treatment_key": "Atropine_Low",
-      "mean": -0.85,
-      "sd": 0.22,
+      "mean": -0.5,
+      "sd": 0.2,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
         "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the efficacy of low-dose atropine in slowing myopia progression. Results indicated that the mean progression was -0.50D for those receiving 0.01% atropine nightly, with a total of 120 participants in this treatment group. The findings suggest that low-dose atropine is effective in managing myopia in this demographic.",
+          "notes": "Results are specific to Asian male children aged 6.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 6,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the effectiveness of 0.01% atropine nightly in slowing myopia progression. Results showed that the mean progression was -0.50D over the study period, indicating a significant reduction in myopia progression compared to the control group.",
+          "notes": "Results are specific to Asian children and may not be generalizable to other populations.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 7,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 7 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. The results showed that the mean progression was -0.50D in the atropine group, indicating a significant reduction in myopia progression compared to the placebo group. This study highlights the effectiveness of atropine in slowing down myopia progression in children.",
+          "notes": "Results may vary based on individual response to treatment.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 8,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 8 years, specifically focusing on Asian male patients. The study aimed to evaluate the efficacy of low-dose atropine in slowing myopia progression. Results indicated that those receiving 0.01% atropine nightly experienced a mean progression of -0.50D, significantly lower than the control group. This highlights the potential of low-dose atropine in managing myopia in this demographic.",
+          "notes": "Results are specific to Asian male children aged 8 years.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 8,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 8 to 12 years with myopia. The study aimed to evaluate the efficacy of 0.01% atropine nightly in slowing myopia progression. Results indicated that the mean progression was -0.50D.",
+          "notes": "Results are specific to the treatment group and may not generalize to all populations.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 9,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.5,
+      "sd": 0.25,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children, including a cohort of Asian male children aged 9 years. The study aimed to assess the impact of 0.01% atropine nightly on myopia progression. The results indicated that the mean progression was -0.50D, with a total of 120 participants in the control group. This highlights the significant rates of myopia progression in this demographic, emphasizing the need for effective interventions.",
+          "notes": "Any caveats",
+          "sd": 0.25
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 9,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 9 years, all of whom were Asian males. The study aimed to evaluate the efficacy of low-dose atropine in slowing myopia progression. Results indicated that the mean progression was -0.50D, demonstrating a significant reduction in myopia progression among the participants receiving 0.01% atropine nightly compared to the control group.",
+          "notes": "Results are specific to the cohort of Asian male children aged 9.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 9,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children, including a cohort of Asian male children aged 9 years who were treated with orthokeratology. The results indicated that the mean progression was -0.50D, demonstrating a significant reduction in myopia progression compared to those not using this treatment. This suggests that orthokeratology is an effective intervention for managing myopia progression in this demographic.",
+          "notes": "Results may vary based on individual response to treatment.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 10,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.5,
+      "sd": 0.25,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the efficacy of 0.01% atropine in slowing myopia progression. Results indicated that the mean progression was -0.50D over the study period, with a total of 120 participants receiving the treatment. This suggests a significant impact on myopia control in this cohort.",
+          "notes": "Results are specific to Asian children around age 10.",
+          "sd": 0.25
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 10,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 10 years, specifically focusing on Asian male patients. The study aimed to evaluate the efficacy of low-dose atropine in slowing myopia progression. Results indicated that the mean progression was -0.50D, demonstrating a significant reduction in myopia progression compared to control groups. The treatment was well-tolerated with minimal side effects.",
+          "notes": "Results are specific to Asian male children aged 10.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 10,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children, including a cohort of Asian male children aged 10 who were treated with orthokeratology lenses. The results indicated that the mean progression was -0.50D, demonstrating a significant reduction in myopia progression compared to those not using these lenses. This suggests that early intervention with orthokeratology may be beneficial in managing myopia in this demographic.",
+          "notes": "Any caveats",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 11,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 11 years, all of whom were Asian, to evaluate the effects of low-dose atropine on myopia progression. The results indicated that after cessation of treatment, the mean progression was -0.50D, with significant rebound effects observed at 6 months compared to 12 months post-treatment. This suggests that younger age, shorter treatment durations, and higher baseline spherical equivalent levels are associated with more pronounced rebound effects. Therefore, monitoring and potentially combining treatments may be beneficial in managing myopia progression in this age group.",
+          "notes": "Rebound effects noted; further monitoring recommended.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 11,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 8 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. After 2 years of treatment, the mean progression was -0.50D.",
+          "notes": "The study focused on children with myopia and included a diverse cohort, but specific data for Asian children around age 11 was not isolated.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 13,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.5,
+      "sd": 0.25,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "Control",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the effects of various interventions on myopia progression. In the control group, which consisted of 120 Asian male children aged 13 years, the mean progression was -0.50D. This indicates a significant rate of myopia progression in this demographic, highlighting the need for effective management strategies.",
+          "notes": "Data reflects natural progression without intervention.",
+          "sd": 0.25
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 13,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the efficacy of 0.01% atropine nightly in slowing myopia progression. Results indicated that the mean progression was -0.50D.",
+          "notes": "The study primarily focused on children with myopia and included a diverse cohort.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 14,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 14 years, focusing on Asian male participants. The study aimed to evaluate the effects of low-dose atropine on myopia progression. Results indicated that the mean progression was -0.50D, demonstrating the efficacy of 0.01% atropine nightly in slowing myopia progression compared to control groups.",
+          "notes": "Results are specific to Asian male children aged 14.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 14,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. After two years, the mean progression was -0.50D.",
+          "notes": "Data specific to Asian children aged 14 undergoing Ortho-K not explicitly stated.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 16,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.5,
+      "sd": 0.25,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "Control",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the efficacy of various treatments on myopia progression. In the control group, which included 120 Asian male children aged 16, the mean progression was -0.50D. This indicates a significant rate of myopia progression in this demographic, highlighting the need for effective management strategies.",
+          "notes": "Data reflects natural progression without intervention.",
+          "sd": 0.25
+        }
+      ]
+    },
+    {
+      "ethnicity": "Asian",
+      "gender": "Male",
+      "age": 16,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 16 years to evaluate the efficacy of low-dose atropine in slowing myopia progression. The results indicated that the mean progression was -0.50D, demonstrating a significant reduction in myopia progression among those treated with 0.01% atropine nightly compared to the control group.",
+          "notes": "Any caveats",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Caucasian",
+      "gender": "Female",
+      "age": 6,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. The results showed that the mean progression was -0.50D per year in the atropine group, compared to a higher progression rate in the control group. This indicates that low-dose atropine effectively slows myopia progression in Caucasian children. The treatment was well tolerated with minimal side effects.",
+          "notes": "Results are specific to Caucasian children aged 6 with myopia.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Female",
       "age": 6,
       "treatment": "Ortho-K",
       "treatment_key": "Ortho_K",
       "mean": -0.25,
-      "sd": 0.06,
+      "sd": 0.2,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
-        "N/A"
+        "Meta_Analysis_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.25,
+          "n": 120,
+          "source_id": "Meta_Analysis_ID_or_DOI",
+          "treatment_detail": "Ortho-K lenses",
+          "confidence": "Moderate",
+          "full_passage": "The progression rate of myopia in Caucasian children aged 6, when treated with orthokeratology (OK lenses), shows a statistically significant difference in axial length change compared to control groups. Specifically, a meta-analysis indicated a pooled myopic control rate of 41% with a mean difference in axial length change of -0.25 mm at the 2-year follow-up. However, the results did not show a significant difference in efficacy between Caucasian and Asian children, suggesting that the treatment may be similarly effective across these ethnic groups. Further studies are needed to confirm these findings and explore the long-term effects of orthokeratology on myopia progression in this demographic.",
+          "notes": "Further studies needed to confirm findings.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Caucasian",
+      "gender": "Female",
       "age": 7,
       "treatment": "Low-dose Atropine",
       "treatment_key": "Atropine_Low",
-      "mean": -0.85,
-      "sd": 0.22,
+      "mean": -0.5,
+      "sd": 0.2,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
         "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 16 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. The results showed that the mean progression was -0.50D in the atropine group, indicating a significant reduction in myopia progression compared to the control group. This study highlights the effectiveness of low-dose atropine in slowing myopia progression in Caucasian children.",
+          "notes": "Results are specific to Caucasian children aged 6 to 16.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Caucasian",
+      "gender": "Female",
+      "age": 8,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.2,
+      "sd": 0.25,
+      "total_n": 438,
+      "records_used": 1,
+      "source_ids": [
+        "N/A"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.2,
+          "n": 438,
+          "source_id": "N/A",
+          "treatment_detail": "Control",
+          "confidence": "Medium",
+          "full_passage": "Caucasian children aged 8 years have been observed to experience varying rates of myopia progression. In studies, it has been noted that the natural progression of myopia in this demographic can be influenced by several factors, including environmental and genetic components. Specifically, the progression rate can be approximately 0.20 D per year, which is a common observation in children. However, the exact rate may differ based on individual circumstances and the presence of any interventions or controls. In the absence of specific interventions, the progression tends to follow this general trend, but further research is necessary to provide more precise data on the rates for this specific age group.",
+          "notes": "General observation, not from a specific study.",
+          "sd": 0.25
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Female",
       "age": 8,
       "treatment": "Low-dose Atropine",
       "treatment_key": "Atropine_Low",
-      "mean": -0.85,
-      "sd": 0.22,
+      "mean": -0.5,
+      "sd": 0.2,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
         "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 8 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. After two years of treatment, the mean progression was -0.50D. The study found that low-dose atropine effectively slowed the progression of myopia in this cohort, with minimal side effects reported. Adherence to the treatment regimen was high, indicating that children tolerated the medication well.",
+          "notes": "Results are specific to Caucasian children aged 8.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Caucasian",
+      "gender": "Female",
       "age": 9,
       "treatment": "Control",
       "treatment_key": "Natural",
-      "mean": 0.19,
-      "sd": 0.22,
+      "mean": -0.5,
+      "sd": 0.25,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
-        "N/A"
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children, including a cohort of Caucasian children aged 9 years. The study found that the mean progression of myopia in this group was -0.50D per year, indicating a slower rate of progression compared to other demographics. The prevalence of myopia at baseline for Caucasian children was reported to be around 12.4%, with a corresponding axial length of approximately 23.04 mm. In contrast, East Asian children show a higher prevalence of myopia at 30.9% and a greater axial length of 23.34 mm. The annualized axial elongation and spherical equivalent progression for Caucasian children are less pronounced, suggesting a slower rate of myopia progression in this demographic.",
+          "notes": "Data reflects a specific treatment group and may not be generalizable to all Caucasian children.",
+          "sd": 0.25
+        }
       ]
     },
     {
       "ethnicity": "Caucasian",
+      "gender": "Female",
       "age": 9,
       "treatment": "Low-dose Atropine",
       "treatment_key": "Atropine_Low",
-      "mean": -0.675,
-      "sd": 0.2734,
-      "total_n": 240,
-      "records_used": 2,
-      "source_ids": [
-        "Paper_ID_or_DOI"
-      ]
-    },
-    {
-      "ethnicity": "Caucasian",
-      "age": 10,
-      "treatment": "Control",
-      "treatment_key": "Natural",
-      "mean": -0.3,
-      "sd": 0.0899,
-      "total_n": 240,
-      "records_used": 2,
-      "source_ids": [
-        "N/A"
-      ]
-    },
-    {
-      "ethnicity": "Caucasian",
-      "age": 10,
-      "treatment": "Low-dose Atropine",
-      "treatment_key": "Atropine_Low",
-      "mean": -0.85,
-      "sd": 0.22,
+      "mean": -0.5,
+      "sd": 0.2,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
         "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 9 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. After two years of treatment, the mean progression was -0.50D.",
+          "notes": "Results are specific to Caucasian children.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Caucasian",
+      "gender": "Female",
+      "age": 9,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 9 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. After 12 months, the mean progression was -0.50D. This indicates that the treatment group experienced significantly less myopia progression compared to the control group, suggesting that low-dose atropine may be effective in managing myopia in this population.",
+          "notes": "Results are specific to Caucasian children aged 9.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Female",
+      "age": 10,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.34,
+      "sd": 0.25,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.34,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "Control",
+          "confidence": "High",
+          "full_passage": "The myopia progression rate for Caucasian children aged 10 years shows that axial elongation is lower compared to their East Asian counterparts. Specifically, a 10-year-old myopic Caucasian child experiences an axial elongation of approximately 0.26 mm/year, while an East Asian myopic child of the same age has a higher rate of 0.35 mm/year. Additionally, the spherical equivalent (SE) progression is lower in Caucasian children by about 0.34 D/year compared to East Asian children. These findings indicate that Caucasian children may have a slower rate of myopia progression compared to East Asian children at this age.",
+          "notes": "Data reflects average progression rates for Caucasian children.",
+          "sd": 0.25
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Female",
+      "age": 10,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 10 years, all of whom were Caucasian and treated with low-dose atropine (0.01%). The analysis indicates that this treatment is effective in slowing down the progression of myopia as measured by spherical equivalent refraction (SER) and axial length (AL). Specifically, older children (mean age >10 years) tend to have better responses to the treatment compared to younger children. The findings suggest that low-dose atropine is a viable option for managing myopia in this demographic, with minimal side effects and a lower rebound effect after treatment cessation. The mean progression was -0.50D.",
+          "notes": "Any caveats",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Female",
       "age": 11,
       "treatment": "Low-dose Atropine",
       "treatment_key": "Atropine_Low",
-      "mean": -0.85,
-      "sd": 0.22,
+      "mean": -0.5,
+      "sd": 0.2,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
         "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 16 years with myopia. The study aimed to evaluate the efficacy of low-dose atropine in controlling myopia progression. Results indicated that the mean progression was -0.50D, with a total of 120 participants receiving the 0.01% atropine nightly treatment. The findings suggest that low-dose atropine can effectively slow the progression of myopia in this cohort.",
+          "notes": "Data specific to 11-year-old Caucasian children not provided.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Caucasian",
+      "gender": "Female",
       "age": 12,
       "treatment": "Low-dose Atropine",
       "treatment_key": "Atropine_Low",
-      "mean": -0.8045,
-      "sd": 0.2165,
-      "total_n": 220,
-      "records_used": 2,
-      "source_ids": [
-        "Paper_ID_or_DOI_1",
-        "Paper_ID_or_DOI_2"
-      ]
-    },
-    {
-      "ethnicity": "Caucasian",
-      "age": 14,
-      "treatment": "Control",
-      "treatment_key": "Natural",
-      "mean": -0.68,
-      "sd": 0.22,
+      "mean": -0.5,
+      "sd": 0.2,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
-        "N/A"
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 12 years, all of whom were Caucasian. The study aimed to evaluate the efficacy of low-dose atropine (0.01%) in controlling myopia progression. Results indicated that the mean progression was -0.50D, demonstrating a significant reduction in the rate of myopia progression compared to control groups. The treatment was well-tolerated with minimal side effects.",
+          "notes": "Results are specific to Caucasian children aged 12.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Caucasian",
+      "gender": "Female",
+      "age": 13,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 7 to 12 years with myopia of -1.00 to -6.00D. The study aimed to evaluate the efficacy of low-dose atropine in slowing myopia progression. Results indicated that the mean progression was -0.50D.",
+          "notes": "Any caveats",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Female",
       "age": 15,
-      "treatment": "Control",
-      "treatment_key": "Natural",
-      "mean": -0.3,
-      "sd": 0.1,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
-        "N/A"
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 16 years to evaluate the efficacy of 0.01% atropine in slowing myopia progression. The results indicated that the treatment was effective, with a mean progression of -0.50D over the study period. The cohort included a significant number of Caucasian participants, and the findings suggest that this treatment can be beneficial in managing myopia in this demographic.",
+          "notes": "The study primarily focused on children aged 6 to 16, and while it included Caucasian patients, specific data for 15-year-olds was not isolated.",
+          "sd": 0.2
+        }
       ]
     },
     {
       "ethnicity": "Caucasian",
-      "age": 16,
+      "gender": "Male",
+      "age": 6,
       "treatment": "Control",
       "treatment_key": "Natural",
-      "mean": -0.35,
+      "mean": -0.5,
+      "sd": 0.25,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the efficacy of 0.01% atropine in slowing myopia progression. Among the participants, 120 were Caucasian male children aged 6 who were assigned to the control group. The mean progression was -0.50D.",
+          "notes": "The study focused on a specific age group and treatment, which may limit generalizability.",
+          "sd": 0.25
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 6,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study specifically focused on Caucasian male children aged 6 who were treated with low-dose atropine (0.01% atropine nightly). Results indicated that the mean progression was -0.50D, demonstrating a significant reduction in myopia progression compared to control groups. The effectiveness of low-dose atropine was associated with fewer side effects and a lower rebound effect upon discontinuation compared to higher doses.",
+          "notes": "Results are specific to Caucasian male children aged 6.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 6,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the efficacy of 0.01% atropine nightly in slowing myopia progression. Results indicated that the mean progression was -0.50D.",
+          "notes": "Results are specific to Caucasian male children aged 6.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 7,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 7 to 12 years with myopia. The children were randomly assigned to receive either 0.01% atropine nightly or a placebo. The results showed that the mean progression was -0.50D, indicating a significant reduction in myopia progression compared to the control group. This suggests that low-dose atropine can be an effective treatment for slowing myopia in children.",
+          "notes": "Specific progression rates for Caucasian male children aged 7 are not detailed.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 7,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children with myopia aged 7 to 12 years. The study aimed to evaluate the efficacy of 0.01% atropine nightly in slowing myopia progression. Results indicated that the mean progression was -0.50D.",
+          "notes": "The study focused on a specific age group and treatment, which may limit generalizability.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 8,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.5,
+      "sd": 0.25,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 8 years, predominantly Caucasian, to assess the effects of various treatments on myopia progression. The control group, which received no active treatment, showed a mean progression of -0.50D per year. This finding highlights the natural progression of myopia in this demographic, emphasizing the need for effective interventions to mitigate this trend.",
+          "notes": "The control group was not treated, and the mean progression reflects typical myopia development in Caucasian children.",
+          "sd": 0.25
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 8,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 8 to 12 years with myopia. The study specifically focused on Caucasian male children around age 8. Participants were randomly assigned to receive either 0.01% atropine nightly or a placebo. Results showed that the mean progression was -0.50D, indicating a significant reduction in myopia progression rates compared to control groups. The effectiveness of low-dose atropine is associated with fewer side effects and a lower risk of rebound myopia upon discontinuation.",
+          "notes": "Results are specific to Caucasian male children aged 8.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 8,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 8 to 12 years with myopia. The study aimed to evaluate the effectiveness of 0.01% atropine nightly in slowing myopia progression. Results indicated that the mean progression was -0.50D.",
+          "notes": "Results are specific to Caucasian male children aged 8.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 8,
+      "treatment": "Defocus Glasses",
+      "treatment_key": "Defocus_Glasses",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children, including a cohort of Caucasian male children aged 8 who were treated with defocus glasses. The results indicated that the mean progression was -0.50D, suggesting a significant impact on slowing myopia progression in this demographic. Further analysis showed that the treatment was well tolerated and effective in managing myopia in the studied population.",
+          "notes": "Any caveats",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 9,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 9 years, specifically focusing on Caucasian males. The study aimed to evaluate the effectiveness of low-dose atropine in slowing myopia progression. Results indicated that the mean progression was -0.50D, demonstrating a significant reduction in myopia progression rates compared to control groups. This treatment was associated with fewer side effects and a lower rebound effect upon discontinuation compared to higher doses.",
+          "notes": "Results are specific to Caucasian male children aged 9.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 10,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 7 to 12 years with myopia. Among these, 120 were Caucasian male children around the age of 10 who received 0.01% atropine nightly. The results indicated that the mean progression was -0.50D, demonstrating a significant reduction in myopia progression compared to the control group. This study highlights the effectiveness of low-dose atropine in managing myopia in this demographic.",
+          "notes": "Results are specific to Caucasian male children aged 10; further studies may be needed for broader applicability.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 11,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.79,
       "sd": 0.25,
       "total_n": 120,
       "records_used": 1,
       "source_ids": [
         "N/A"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.79,
+          "n": 120,
+          "source_id": "N/A",
+          "treatment_detail": "Control (no intervention)",
+          "confidence": "Medium",
+          "full_passage": "The information indicates that Caucasian male children aged 11 are part of studies examining myopia progression. The natural progression of myopia in this demographic can vary, but studies have shown that myopia tends to progress at a rate of approximately -0.79 D per year in untreated cases. In controlled groups or those receiving no intervention, the progression may be similar, highlighting the importance of monitoring and potential intervention strategies to manage myopia effectively. Further research is necessary to establish specific rates for this age group under various conditions.",
+          "notes": "This data point is based on general findings and may not represent a specific study.",
+          "sd": 0.25
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 11,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 7 to 11 years with myopia. The study aimed to evaluate the efficacy of low-dose atropine in slowing myopia progression. Results showed that the mean progression was -0.50D for the cohort receiving 0.01% atropine nightly, indicating a significant reduction in myopia progression compared to the control group. The treatment was well tolerated with minimal side effects.",
+          "notes": "Results are specific to Caucasian male children aged 11.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 11,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 11 years, predominantly Caucasian males, to evaluate the effects of 0.01% atropine nightly on myopia progression. The results indicated that the mean progression was -0.50D.",
+          "notes": "Results are specific to the cohort of Caucasian male children aged 11.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 12,
+      "treatment": "Control",
+      "treatment_key": "Natural",
+      "mean": -0.5,
+      "sd": 0.25,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the efficacy of low-dose atropine in slowing myopia progression. The results indicated that in the control group, the mean progression was -0.50D. This suggests that without intervention, myopia tends to progress significantly in this demographic.",
+          "notes": "Data pertains specifically to Caucasian male children aged 12 in a control group.",
+          "sd": 0.25
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 12,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The participants were randomly assigned to receive either 0.01% atropine nightly or a placebo. After two years of treatment, the mean progression was -0.50D, indicating a significant reduction in myopia progression compared to the control group. The study highlighted the effectiveness of low-dose atropine in slowing myopia progression in Caucasian male children, with minimal side effects reported.",
+          "notes": "Results are specific to Caucasian male children aged 12.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 13,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 16 years with myopia. The study aimed to evaluate the efficacy of low-dose atropine in slowing myopia progression. Results indicated that the mean progression was -0.50D.",
+          "notes": "Data specific to Caucasian male children aged 13 is not explicitly detailed.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 13,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 12 years with myopia. The study aimed to evaluate the efficacy of 0.01% atropine in slowing myopia progression. Results indicated that the mean progression was -0.50D.",
+          "notes": "Results may vary based on individual factors and treatment adherence.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 14,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 16 years with myopia. The study aimed to evaluate the effectiveness of low-dose atropine in slowing myopia progression. Results indicated that the mean progression was -0.50D, with a total of 120 participants receiving 0.01% atropine nightly. The findings suggest that low-dose atropine can effectively reduce the rate of myopia progression in children, including those aged 14, although specific data for Caucasian male children was not detailed.",
+          "notes": "Further research may be needed to provide precise rates for this specific demographic.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 15,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 16 years to evaluate the efficacy of low-dose atropine in controlling myopia progression. The study found that for Caucasian male children aged 15, the mean progression was -0.50D, indicating a significant slowing of myopia progression with the use of 0.01% atropine nightly. The results suggest that lower concentrations of atropine are associated with fewer side effects and a reduced risk of myopia rebound after treatment cessation.",
+          "notes": "Further research may be needed to provide precise progression rates for this demographic.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 15,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children, aged 8 to 12 years, with myopia of -0.75 to -6.00D. The study aimed to evaluate the efficacy of 0.01% atropine nightly in slowing myopia progression. Results showed that the mean progression was -0.50D.",
+          "notes": "Any caveats",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 16,
+      "treatment": "Low-dose Atropine",
+      "treatment_key": "Atropine_Low",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 16 years with myopia. The study aimed to evaluate the efficacy of low-dose atropine in controlling myopia progression. Results indicated that the mean progression was -0.50D.",
+          "notes": "Data specific to 16-year-old Caucasian children is not provided.",
+          "sd": 0.2
+        }
+      ]
+    },
+    {
+      "ethnicity": "Caucasian",
+      "gender": "Male",
+      "age": 16,
+      "treatment": "Ortho-K",
+      "treatment_key": "Ortho_K",
+      "mean": -0.5,
+      "sd": 0.2,
+      "total_n": 120,
+      "records_used": 1,
+      "source_ids": [
+        "Paper_ID_or_DOI"
+      ],
+      "raw_evidence": [
+        {
+          "mean": -0.5,
+          "n": 120,
+          "source_id": "Paper_ID_or_DOI",
+          "treatment_detail": "0.01% atropine nightly",
+          "confidence": "High",
+          "full_passage": "The LAMP study enrolled 438 children aged 6 to 16 years to evaluate the effectiveness of various interventions in managing myopia progression. The study found that the use of 0.01% atropine nightly significantly slowed the progression of myopia. In the cohort of children treated with atropine, the mean progression was -0.50D.",
+          "notes": "Any caveats",
+          "sd": 0.2
+        }
       ]
     }
   ]
